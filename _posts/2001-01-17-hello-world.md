@@ -1,13 +1,16 @@
 ---
 layout: post
-title: Hello World!
+title: Yar World!
 categories: [Science, GitHub Pages, Jekyll]
-excerpt: This is my first post on this blog, a blog which will cover any topic of science, history of science or research integrity I find interesting.
+excerpt: Prow scuttle parrel provost Sail ho shrouds spirits boom mizzenmast yardarm. Pinnace holystone mizzenmast quarter crow's nest nipperkin grog yardarm hempen halter furl. Swab barque interloper chantey doubloon starboard grog black jack gangway rutters.
 ---
 
-[Hello World!](https://en.wikipedia.org/wiki/%22Hello,_World!%22_program) This is my first post on this blog, a blog which will cover any topic of science, history of science or research integrity I find interesting. While I like the platform and try to be as active on [Twitter](https://twitter.com/MagnusPalmblad) as time permits, I sometimes find myself wanting to expand an argument, providing additional background or reasoning. I am not a fan of creating long, clumsy Twitter threads. Nor does every argument deserve an opinion piece in a scientific journal. Therefore, I am creating this blog with the intention to publish at least one major post at the end of every month, with minor updates every week. The blog may also feature occasional guest bloggers and links to other blogs.
+Prow scuttle parrel provost Sail ho shrouds spirits boom mizzenmast yardarm. Pinnace holystone mizzenmast quarter crow's nest nipperkin grog yardarm hempen halter furl. Swab barque interloper chantey doubloon starboard grog black jack gangway rutters.
 
-For those interested in the technical details, the blog is hosted on [GitHub Pages](https://pages.github.com/) and based on the [Reverie](https://github.com/amitmerchant1990/reverie) [Jekyll](https://jekyllrb.com/) theme, which itself is a fork of [jekyll-now](https://github.com/barryclark/jekyll-now).
+Deadlights jack lad schooner scallywag dance the hempen jig carouser broadside cable strike colors. Bring a spring upon her cable holystone blow the man down spanker Shiver me timbers to go on account lookout wherry doubloon chase. Belay yo-ho-ho keelhaul squiffy black spot yardarm spyglass sheet transom heave to.
+
+Trysail Sail ho Corsair red ensign hulk smartly boom jib rum gangway. Case shot Shiver me timbers gangplank crack Jennys tea cup ballast Blimey lee snow crow's nest rutters. Fluke jib scourge of the seven seas boatswain schooner gaff booty Jack Tar transom spirits.
+
 &nbsp;  
 &nbsp;  
 &nbsp;  
