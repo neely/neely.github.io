@@ -3,10 +3,10 @@
 #
 
 # Name of your site (displayed in the header)
-name: "Blog-esque: Notes from the Edge"
+name: Notes from the Edge
 
 # Name of the author
-author: Ben Neely (@neely615)
+author: Ben Neely
 
 # Short bio or description (displayed in the header)
 description: A compendium with digressions of topics started elsewhere on the interwebs.
@@ -39,7 +39,7 @@ footer-links:
 # google_analytics:
 
 # For newer "GA4" analytics, use the following instead of the "UA" entry above
-#google_analytics_ga4:
+google_analytics_ga4: 2999802879
 
 # Your website URL (e.g. http://amitmerchant1990.github.io or http://www.amitmerchant.com)
 # Used for Sitemap.xml and your RSS feed
