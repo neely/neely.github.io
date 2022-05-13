@@ -5,7 +5,10 @@ categories: [Science communication, Eurovision, Humor]
 excerpt: Guest post by Magnus Palmblad. Tomorrow, May 14, 2022, is the Grand Final of the 66th Eurovision Song Contest, with hundreds of millions of fans across Europe (from Azerbaijan to Australia) spending their Saturday evening watching one of the greatest spectacles on television. 
 ---
 
-### Guest post by Magnus Palmblad
+Guest post by Magnus Palmblad
+
+&nbsp;
+&nbsp;
 
 Tomorrow, May 14, 2022, is the [Grand Final of the 66th Eurovision Song Contest](https://www.youtube.com/watch?v=VhyLh5sGRRI&list=PLmWYEDTNOGUJDg0GIJ4DH9Fz4aijqEKMM&index=5), with hundreds of millions of fans across Europe (from Azerbaijan to Australia) spending their Saturday evening watching one of the greatest spectacles on television. Explaining Eurovision to American friends, especially those who haven't seen [The Story of Fire Saga](https://www.imdb.com/title/tt8580274/) is nearly impossible. But in 2016, when Sweden played host after [Måns Zelmerlöw’s win](https://www.youtube.com/watch?v=Tefuv5H0Hok) the previous year, Edward af Sillén and Fredrik Kempe co-wrote [a teasing love letter](https://www.youtube.com/watch?v=Cv6tgnx6jTQ) to Eurovision, outlining the recipe for a winner. Stuffed with references to past performances, the number was memorably performed by Petra Mede (of the “Bonus Family” on Netflix) and Måns Zelmerlöw, making it the highlight of that year’s show.
 
