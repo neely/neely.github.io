@@ -2,7 +2,7 @@
 layout: post
 title: Hello World!
 categories: [Science, GitHub Pages, Jekyll, Topics]
-excerpt: This is the official start of what could be termed a microblog, that sometimes is long.
+excerpt: This is the official start of what could be termed a blog, that sometimes is long.
 ---
 
 This is the official start of what could be termed a blog, that sometimes is long. These posts will be akin to the [News in Proteomics Research](http://proteomicsnews.blogspot.com/) that initially was a public note keeping system, and pretty much still is. Similarly, this blog is a way for me to keep track of discussions I enjoyed on Twitter (or elsewhere online) and sometimes add thoughts or references. I promise typos and likely edits and re-edits.
