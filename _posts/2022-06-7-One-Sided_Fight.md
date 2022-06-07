@@ -13,7 +13,7 @@ Some key premises, which contain the root of the argument:
 * cost isn't actually important, but ease of data use is ([my response](https://twitter.com/neely615/status/1530653991801077763?s=20&t=k118iFtYQMzFiN_dZOoDBQ))
 * if previous (and current) mass spec-based proteomics results that ignored proteoforms and PTMs were useful, then why not these newer non-MS techniques
 * mass spec-based proteomics users aren't the target audience (it doesn't need to be better than mass spec to have widespread adoption)
-* genomics cores can easily buy turn-key solutions (aptamer, pore-based, or techniques using existing sequencers) to "do" proteomics (ex. (Genomics Proteomics Core](https://www.bidmc.org/research/core-facilities/genomics-proteomics-core))
+* genomics cores can easily buy turn-key solutions (aptamer, pore-based, or techniques using existing sequencers) to "do" proteomics (ex. [Genomics Proteomics Core](https://www.bidmc.org/research/core-facilities/genomics-proteomics-core))
 * non-mass spec-based techniques don't actually need to compete with mass spec capabilities (PTMs, proteoforms, etc.)
  - We get it, they can do everything and are awesome. I completely agree.
 
@@ -36,7 +36,7 @@ A follow-up, kind of, was more specific to the pore-based proteomics advancement
 
 &nbsp;  
 
-To be clear, I am not worried about this disruptive technology since I don't study mass specs, I explore biology, and want something to make that easier, whatever it may be. When I see ONT (moto: "Our goal is to enable the analysis of anything, by anyone, anywhere.") and people posting pictures of them analyzing genomes in their car in traffic, and then I look at the Autódromo Internacional do Algarve really fast, but it is super expensive, breaks quite a bit, and requires a support team to use. If my goal is to drive, an F1 may not be for me, and arguments about how well my Camry performs at 200 mph won't convince me to choose an F1. Still, for much of the work I am currently interested in, broadly under the umbrella of protein forensics, a mass spec is great at pattern recognition and has a definite advantage imo. But maybe even this is just my bias coming out.
+To be clear, I am not worried about this disruptive technology since I don't study mass specs, I explore biology, and want something to make that easier, whatever it may be. When I see ONT (moto: "Our goal is to enable the analysis of anything, by anyone, anywhere.") and people posting pictures of them analyzing genomes in their car in traffic, I get excited thinking "what if that was a proteomics analysis. To use a bad car analogy, the larger mass spec v non-mass spec-based proteomcs is a lot like picking a vehicle. Let's say I see an F1 car whipping around the Autódromo Internacional do Algarve really fast. That is great but it is super expensive, breaks quite a bit, and requires a support team to use. If my goal is to simply drive, an F1 may not be for me, and arguments about how poorly my Camry performs at 200 mph won't convince me to choose an F1. Still, for much of the work I am currently interested in, broadly under the umbrella of protein forensics, a mass spec is great at pattern recognition and has a definite advantage imo. But maybe even this is just my bias coming out.
 
 &nbsp;  
 
