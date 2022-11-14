@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Is it a fight if only one side is fighting
+date: 2022-06-07
 categories: [non-mass spec-based proteomics, future of proteomics, pore-based proteomics, aptamer-based proteomics]
 excerpt: A constant discussion on the twitters, and in-person, is the rise of non-mass spec based proteomic techniques. This discussion is developing quite well from the mass spec side, except for one crucial point: we seem to think it is a point up for debate.
 ---
