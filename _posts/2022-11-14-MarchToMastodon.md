@@ -10,8 +10,9 @@ The last couple weeks have seen tremendous upheaval on Twitter as Elon Musk has 
 Personally, I don’t see reasons to jump ship immediately ([my thoughts](https://twitter.com/neely615/status/1590329563414159361?s=20&t=Lgv2-j8ElmhsPf3-PKOvZA)), but I did want to go and look at Mastodon (the main [exodus destination](https://techcrunch.com/2022/11/11/numerous-social-apps-see-gains-in-wake-of-twitter-chaos-new-data-shows/)), and so have compiled some notes/links.
 
 - [What is a Mastodon?](https://techcrunch.com/2022/11/08/what-is-mastodon/) ([or a more exhaustive look](https://blog.djnavarro.net/posts/2022-11-03_what-i-know-about-mastodon/))
-- Picking a server (aka instance) is your first choice, but you can use [Debirdify](https://pruvisto.org/debirdify/) to see where your Twitter followers and follows have gone.
-- Cris Lapthorn has a running [list of what servers/instance people have moved to](https://twitter.com/makingions/status/1590160421931352064?s=20&t=Lgv2-j8ElmhsPf3-PKOvZA), though Debirdify can capture this as well.
+- [An interview with person behind Mastodon, Eugen Rochko](https://www.wired.com/story/the-man-behind-mastodon-eugen-rochko-built-it-for-this-moment/)
+- Picking a server (aka instance) is your first choice, but you can use [Debirdify](https://pruvisto.org/debirdify/) to see where your Twitter followers and follows have gone (note this only works if users have their Mastodon info somewhere on profile, therefore it is NOT complete).
+- Cris Lapthorn has a running [list of what servers/instance people have moved to](https://twitter.com/makingions/status/1590160421931352064?s=20&t=Lgv2-j8ElmhsPf3-PKOvZA).
 - [How to change servers (and when you should).]( https://screenrant.com/mastodon-change-servers-migrate-account-how/)
 - [Understanding “Home”, “Local”, and “Federated” timelines.](https://queer.party/@cassolotl/108195007013414698)
 - [How to “DM” on Mastodon (cause it isn’t quite the same).]( https://gizmodo.com/mastodon-how-to-dm-send-messages-twitter-1849759852)
