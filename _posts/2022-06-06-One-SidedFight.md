@@ -13,7 +13,7 @@ Some key premises, which contain the root of the argument:
 * mass spec-based proteomics users aren't the target audience (it doesn't need to be better than mass spec to have widespread adoption)
 * genomics cores can easily buy turn-key solutions (aptamer, pore-based, or techniques using existing sequencers) to "do" proteomics (ex. [Genomics Proteomics Core](https://www.bidmc.org/research/core-facilities/genomics-proteomics-core))
 * non-mass spec-based techniques don't actually need to compete with mass spec capabilities (PTMs, proteoforms, etc.)
- - We get it, they can do everything and are awesome. I completely agree.
+ - We get it, mass specs can do everything and are awesome. I completely agree.
 
 The big tweet "How to make MS-based proteomics accessible as DNA/RNA"?
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">What will it take to make mass-spec proteomics as accessible as DNA/RNA sequencing currently is ? <a href="https://t.co/IhacovSa44">https://t.co/IhacovSa44</a></p>&mdash; Prof. Nikolai Slavov (@slavov_n) <a href="https://twitter.com/slavov_n/status/1530517564115255296?ref_src=twsrc%5Etfw">May 28, 2022</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
