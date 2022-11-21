@@ -11,13 +11,14 @@ Personally, I don’t see reasons to jump ship immediately ([my thoughts](https:
 
 - [What is a Mastodon?](https://techcrunch.com/2022/11/08/what-is-mastodon/) ([or a more exhaustive look](https://blog.djnavarro.net/posts/2022-11-03_what-i-know-about-mastodon/))
 - [An interview with person behind Mastodon, Eugen Rochko](https://www.wired.com/story/the-man-behind-mastodon-eugen-rochko-built-it-for-this-moment/)
-- Picking a server (aka instance) is your first choice, but you can use [Debirdify](https://pruvisto.org/debirdify/) to see where your Twitter followers and follows have gone (note this only works if users have their Mastodon info somewhere on profile, therefore it is NOT complete).
+- Picking a server (aka instance) is your first choice, but you can use [Debirdify](https://pruvisto.org/debirdify/) (or [FediFinder](https://fedifinder.glitch.me/)) to see where your Twitter followers and follows have gone (note this only works if users have their Mastodon info somewhere on profile, therefore it is NOT complete).
 - Cris Lapthorn has a running [list of what servers/instance people have moved to](https://twitter.com/makingions/status/1590160421931352064?s=20&t=Lgv2-j8ElmhsPf3-PKOvZA).
 - [How to change servers (and when you should).]( https://screenrant.com/mastodon-change-servers-migrate-account-how/)
 - [Understanding “Home”, “Local”, and “Federated” timelines.](https://queer.party/@cassolotl/108195007013414698)
 - [How to “DM” on Mastodon (cause it isn’t quite the same).]( https://gizmodo.com/mastodon-how-to-dm-send-messages-twitter-1849759852)
 - How to save the SciTwitter network using [OpenCheck](https://opencheck.is/scitwitter)?
 - And no, users [can't see follower/follow list on other servers](https://www.reddit.com/r/Mastodon/comments/yrjq1y/seeing_followers_from_other_servers/). A feature not a bug, so I have been told.
+- For these topics and anything else, consult [FediTips](https://fedi.tips/)
 
 Most of my casual research has centered on making Mastodon more like SciTwitter, which is probably missing the point and the potential of Mastodon. Overall, using hashtags is very important (#teamProteome is my new fav), and there was something about using a.gup.pe group ([@MassSpec@a.gup.pe](https://a.gup.pe/u/massspec)), though I can't seem to find the tweet that announced this. Both hashtags and groups can help collate toots into your timeline. I do see some benefits for having a teamProteome specific server (i.e., have a super nerdy Local timeline without needing to follow everyone on your server), but also, for me personally, I think communicating outside of teamProteome is critical. Also, for me at least, I appreciate how I get science and life in one place on Twitter (weather, local stuff, cycling, etc.) and when those things move it will make my Mastodon timeline closer to what I want.
 
