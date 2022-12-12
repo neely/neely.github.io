@@ -238,6 +238,94 @@ To use this script, save it to a .ps1 file and run it using the powershell comma
 
 **ChatGPT**: You're welcome! I'm glad I could help. Let me know if you have any other questions or if there is anything else I can do for you.
 
+
+Now as I was writing this post I realized the mistake that it would copy the ps1 file as well. This made an opportunity to see how I can use ChatGPT when I can't save the console. The original conversation was Friday, and this below was Monday. I pasted it's last description of the code, and the code, and my request.
+
+
+**Me**: Here is a powershell script that will make a specified number of sets of copies of the files in a folder, with each set of copies being prefixed with a two-digit number starting at 01 and incrementing by one for each set of copies. This version of the script also creates a new folder for each set of copies, and names each folder with the two-digit number that is used as the prefix for that set of copies. Can you modify it to ignore any ps1 files?
+
+```
+# Get the current directory where the script is run
+$folder = Get-Location
+
+# Get the files in the current directory
+$files = Get-ChildItem -Path $folder
+
+# Set the total number of sets of copies to create
+$totalSets = 3
+
+# Create a counter to use as the prefix for each set of copies
+$counter = 1
+
+# Loop through the total number of sets
+for ($i = 0; $i -lt $totalSets; $i++) {
+    # Generate the number to use as the prefix for this set of copies
+    $number = "{0:D2}" -f $counter
+
+    # Create a new folder for this set of copies
+    New-Item -ItemType Directory -Path "$folder\$number"
+
+    # Loop through each file in the folder
+    foreach ($file in $files) {
+        # Generate the new file name by prefixing the number
+        $newFileName = "$number-$file"
+
+        # Make a copy of the file with the new name and move it to the new folder
+        Copy-Item -Path $file.FullName -Destination "$folder\$number\$newFileName"
+    }
+
+    # Increment the counter for the next set of copies
+    $counter++
+}
+```
+
+**ChatGP**: To ignore any .ps1 files in the script, you can add a simple if statement to check the file extension of each file and only copy files that do not have the .ps1 extension. Here is an example of how you could modify the script to do this:
+
+```
+# Get the current directory where the script is run
+$folder = Get-Location
+
+# Get the files in the current directory
+$files = Get-ChildItem -Path $folder
+
+# Set the total number of sets of copies to create
+$totalSets = 3
+
+# Create a counter to use as the prefix for each set of copies
+$counter = 1
+
+# Loop through the total number of sets
+for ($i = 0; $i -lt $totalSets; $i++) {
+    # Generate the number to use as the prefix for this set of copies
+    $number = "{0:D2}" -f $counter
+
+    # Create a new folder for this set of copies
+    New-Item -ItemType Directory -Path "$folder\$number"
+
+    # Loop through each file in the folder
+    foreach ($file in $files) {
+        # Check the file extension and only continue if it's not .ps1
+        if ($file.Extension -ne ".ps1") {
+            # Generate the new file name by prefixing the number
+            $newFileName = "$number-$file"
+
+            # Make a copy of the file with the new name and move it to the new folder
+            Copy-Item -Path $file.FullName -Destination "$folder\$number\$newFileName"
+        }
+    }
+
+    # Increment the counter for the next set of copies
+    $counter++
+}
+```
+
+In this modified version of the script, the if statement checks the Extension property of each $file object in the $files array, and only continues with the copy operation if the file extension is not .ps1. This will prevent any .ps1 files from being copied. Let me know if this helps or if you have any other questions.
+
+**Me**: That did the trick. I didn't know how much code I could paste into the chat.
+
+**ChatGPT**: You can paste as much code as you like into the chat! I'm here to help with any coding questions you have, so feel free to include as much code as you need to in order for me to understand your question and provide a helpful response. If you have any other questions, don't hesitate to ask. I'm happy to help.
+
+
 &nbsp;  
 &nbsp;  
 &nbsp;  
