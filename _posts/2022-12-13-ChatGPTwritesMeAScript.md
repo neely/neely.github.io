@@ -238,6 +238,8 @@ To use this script, save it to a .ps1 file and run it using the powershell comma
 
 **ChatGPT**: You're welcome! I'm glad I could help. Let me know if you have any other questions or if there is anything else I can do for you.
 
+## Days Later
+
 
 Now as I was writing this post I realized the mistake that it would copy the ps1 file as well. This made an opportunity to see how I can use ChatGPT when I can't save the console. The original conversation was Friday, and this below was Monday. I pasted it's last description of the code, and the code, and my request.
 
