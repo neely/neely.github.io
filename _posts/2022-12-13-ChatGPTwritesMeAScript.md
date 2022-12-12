@@ -50,11 +50,9 @@ foreach ($file in $files) {
 
 To use this script, save it to a .ps1 file and run it using the powershell command. Be sure to update the $folder variable with the path to the folder you want to copy the files from.
 
-**Me**
-Can you change this so all the copies have the same number prefixed?
+**Me**: Can you change this so all the copies have the same number prefixed?
 
-**ChatGP**
-Sure, here is an updated version of the script that will make a copy of all the files in a folder and prefix the new file names with the same two-digit number:
+**ChatGP**: Sure, here is an updated version of the script that will make a copy of all the files in a folder and prefix the new file names with the same two-digit number:
 
 ```
 $folder = "C:\path\to\folder"
@@ -70,13 +68,15 @@ foreach ($file in $files) {
     # Make a copy of the file with the new name
     Copy-Item -Path $file.FullName -Destination "$folder\$newFileName"
 }
+```
 
 To use this script, save it to a .ps1 file and run it using the powershell command. Be sure to update the $folder and $number variables with the path to the folder you want to copy the files from and the number you want to use as the prefix.
-**Me**
-I don't want the copies to end in .Name, can you change it?
 
-Sure, here is an updated version of the script that will make a copy of all the files in a folder and prefix the new file names with the same two-digit number, without including the .Name extension in the new file names:
+**Me**: I don't want the copies to end in .Name, can you change it?
 
+**ChatGPT**: Sure, here is an updated version of the script that will make a copy of all the files in a folder and prefix the new file names with the same two-digit number, without including the .Name extension in the new file names:
+
+```
 $folder = "C:\path\to\folder"
 $files = Get-ChildItem -Path $folder
 
