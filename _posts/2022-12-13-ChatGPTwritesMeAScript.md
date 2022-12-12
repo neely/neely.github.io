@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  ChatGPT writes me a script
-categories: [social media, Twitter, SciTwitter, Mastodon, TeamMassSpec, teamProteome]
+categories: [Machine Learning, GPT-3, ChatGPT, Robot Overlords]
 excerpt: At the request of Rob Beynon, I am posting the conversation I with ChatGPT to have it write me a script. 
 ---
 
