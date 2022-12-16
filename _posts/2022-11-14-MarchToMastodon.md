@@ -7,18 +7,22 @@ excerpt: With Twitter changing hands, many users are contemplating (or have alre
 
 The last couple weeks have seen tremendous upheaval on Twitter as Elon Musk has taken the helm. Some users have left out of principle (i.e., issues with Elon Musk), but [certain/abundant missteps](https://twitter.com/christapeterso/status/1592317592966168576?s=20&t=48fKAx9eQ9G3x0__XmnLEA) have caused legitimate worries about whether Musk could break Twitter.
 
-Personally, I don’t see reasons to jump ship immediately ([my thoughts](https://twitter.com/neely615/status/1590329563414159361?s=20&t=Lgv2-j8ElmhsPf3-PKOvZA)), but I did want to go and look at Mastodon (the main [exodus destination](https://techcrunch.com/2022/11/11/numerous-social-apps-see-gains-in-wake-of-twitter-chaos-new-data-shows/)), and so have compiled some notes/links.
+Personally, I don’t see reasons to jump ship immediately ([my thoughts](https://twitter.com/neely615/status/1590329563414159361?s=20&t=Lgv2-j8ElmhsPf3-PKOvZA)), but I did want to go and look at Mastodon (the main [exodus destination](https://techcrunch.com/2022/11/11/numerous-social-apps-see-gains-in-wake-of-twitter-chaos-new-data-shows/)), and so have compiled some notes/links (last updated 16 December).
 
 - [What is a Mastodon?](https://techcrunch.com/2022/11/08/what-is-mastodon/) ([or a more exhaustive look](https://blog.djnavarro.net/posts/2022-11-03_what-i-know-about-mastodon/))
 - [An interview with person behind Mastodon, Eugen Rochko](https://www.wired.com/story/the-man-behind-mastodon-eugen-rochko-built-it-for-this-moment/)
-- Picking a server (aka instance) is your first choice, but you can use [Debirdify](https://pruvisto.org/debirdify/) (or [FediFinder](https://fedifinder.glitch.me/)) to see where your Twitter followers and follows have gone (note this only works if users have their Mastodon info somewhere on profile, therefore it is NOT complete).
+- Picking a server (aka instance) is your first choice, but you can use [Movetodon](https://www.movetodon.org/) to easily identify and migrate follows. Previously I mentioned [Debirdify](https://pruvisto.org/debirdify/) (or [FediFinder](https://fedifinder.glitch.me/)) to see where your Twitter followers and follows have gone (note this only works if users have their Mastodon info somewhere on profile, therefore it is NOT complete).
 - Cris Lapthorn has a running [list of what servers/instance people have moved to](https://twitter.com/makingions/status/1590160421931352064?s=20&t=Lgv2-j8ElmhsPf3-PKOvZA).
 - [How to change servers (and when you should).]( https://screenrant.com/mastodon-change-servers-migrate-account-how/)
 - [Understanding “Home”, “Local”, and “Federated” timelines.](https://queer.party/@cassolotl/108195007013414698)
 - [How to “DM” on Mastodon (cause it isn’t quite the same).]( https://gizmodo.com/mastodon-how-to-dm-send-messages-twitter-1849759852)
 - How to save the SciTwitter network using [OpenCheck](https://opencheck.is/scitwitter)?
 - And no, users [can't see follower/follow list on other servers](https://www.reddit.com/r/Mastodon/comments/yrjq1y/seeing_followers_from_other_servers/). A feature not a bug, so I have been told.
-- For these topics and anything else, consult [FediTips](https://fedi.tips/)
+- For these topics and anything else, consult and follow [FediTips](https://fedi.tips/).
+- There are a ton of mobile apps ([an older iOS list](https://transponderings.blog/2022/05/21/eight-mastodon-apps-for-iphone/)), but I have settled on Metatext, while the native web-interface (including on mobile) is great.
+- You really need to use hashtags, both in your posts, but also using the web-interface you can set follows of hashtags (so anyone writing #proteomics toots will appear in my home timeline).
+- Liking in Mastodon doesn't do what liking does on twitter (will appear on other followers timelines), but boosting does. Since there isn't an algorithm pushing content onto folks, you and your follows are the algorithm, so if you see something you like, boost it so it appears on your followers home timelines.
+- You can post gifs from certain mobile apps (ex. metatext) by downloading the gif, then posting it (which posts as a video).
 
 Most of my casual research has centered on making Mastodon more like SciTwitter, which is probably missing the point and the potential of Mastodon. Overall, using hashtags is very important (#teamProteome is my new fav), and there was something about using a.gup.pe group ([@MassSpec@a.gup.pe](https://a.gup.pe/u/massspec)), though I can't seem to find the tweet that announced this. Both hashtags and groups can help collate toots into your timeline. I do see some benefits for having a teamProteome specific server (i.e., have a super nerdy Local timeline without needing to follow everyone on your server), but also, for me personally, I think communicating outside of teamProteome is critical. Also, for me at least, I appreciate how I get science and life in one place on Twitter (weather, local stuff, cycling, etc.) and when those things move it will make my Mastodon timeline closer to what I want.
 
