@@ -7,7 +7,7 @@ excerpt: With Twitter changing hands, many users are contemplating (or have alre
 
 The last couple weeks have seen tremendous upheaval on Twitter as Elon Musk has taken the helm. Some users have left out of principle (i.e., issues with Elon Musk), but [certain/abundant missteps](https://twitter.com/christapeterso/status/1592317592966168576?s=20&t=48fKAx9eQ9G3x0__XmnLEA) have caused legitimate worries about whether Musk could break Twitter.
 
-Personally, I don’t see reasons to jump ship immediately ([my thoughts](https://twitter.com/neely615/status/1590329563414159361?s=20&t=Lgv2-j8ElmhsPf3-PKOvZA)), but I did want to go and look at Mastodon (the main [exodus destination](https://techcrunch.com/2022/11/11/numerous-social-apps-see-gains-in-wake-of-twitter-chaos-new-data-shows/)), and so have compiled some notes/links (last updated 16 December).
+Personally, I don’t see reasons to jump ship immediately ([my thoughts](https://twitter.com/neely615/status/1590329563414159361?s=20&t=Lgv2-j8ElmhsPf3-PKOvZA)), but I did want to go and look at Mastodon (the main [exodus destination](https://techcrunch.com/2022/11/11/numerous-social-apps-see-gains-in-wake-of-twitter-chaos-new-data-shows/)), and so have compiled some notes/links (last updated 16 December, which btw, I seem to have moved over now, though am posting back to twitter via [IFTTT](https://ifttt.com/applets/K6FLEawj-mastodon-twitter-exclude-mentions)).
 
 - [What is a Mastodon?](https://techcrunch.com/2022/11/08/what-is-mastodon/) ([or a more exhaustive look](https://blog.djnavarro.net/posts/2022-11-03_what-i-know-about-mastodon/))
 - [An interview with person behind Mastodon, Eugen Rochko](https://www.wired.com/story/the-man-behind-mastodon-eugen-rochko-built-it-for-this-moment/)
