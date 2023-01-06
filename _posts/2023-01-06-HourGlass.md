@@ -2,7 +2,7 @@
 layout: post
 title:  The Hourglass Paragraph Structure
 categories: [writing, ChatGPT]
-excerpt: As a post-doc we had a grant writing class, and Dr. Ed Krug introduced to me to one of my failsafe writing crutches: the hourglass paragraph structure 
+excerpt: As a post-doc we had a grant writing class, and Dr. Ed Krug introduced to me to one of my failsafe writing crutches, the hourglass paragraph structure 
 ---
 
 As a post-doc at MUSC we had a grant writing class, and [Dr. Ed Krug](https://education.musc.edu/MUSCApps/facultydirectory/Krug-Edward) introduced me to one of my failsafe writing crutches: the hourglass paragraph structure (note: I don't know if this is an actual term, though it does sound very official). I am not 100 % sure this is exactly what Ed taught us, but over the years this is how I implement it to write paragraphs in introduction and discussion sections of papers when I am stuck. I am not an exceptional writer by any means, and like all writers I sometimes have trouble getting things on paper. This trick doesn't work without a general outline, so note that my first step is to outline out what a paper could look like, or at least sections. I am very vanilla here with fiver paragraphs being great and typically focusing on the top three take home points. For this example, I assume the outline came easy and I am now making it into actual sentences. 
