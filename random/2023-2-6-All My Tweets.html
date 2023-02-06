@@ -1,0 +1,99 @@
+
+
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>
+		All My Tweets - View all your tweets on one page.
+	</title>
+	<meta name="description" content="View all your tweets, likes, followers or timeline on one page. Fast, Free and Easy. Great for viewing, searching and saving Twitter info.">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<link href="css/style.css" rel="stylesheet" type="text/css">
+
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-249692-19"></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+
+	gtag('config', 'UA-249692-19');
+	</script>
+
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<script>
+		(adsbygoogle = window.adsbygoogle || []).push({
+			google_ad_client: "ca-pub-2947923100968860",
+			enable_page_level_ads: true
+		});
+	</script>
+
+</head>
+
+<body>
+
+
+	<h1>
+		<img src="img/amt_logo.png" alt="All My Tweets" title="All My Tweets"/>
+	</h1>
+	<p class="intro">Enter a Twitter user name to view all their tweets, likes, followers or timeline.
+	</p>
+	<p>
+		<div id="input-form" >
+			<input type="text" placeholder="Twitter User Name" size="25" id="input-name" value="neely615"/>
+			<div id="load-user-btn" class="view-button">OK</div>
+			<div id="user-status" class="big-text dark-text">User Not Found</div>
+		</div>
+	</p>
+	<div id="user-profile">
+		<p>
+			<div id="user-img" class="profile-img"></div>
+			<div id="user-name" class="big-text dark-text">felixturner</div>
+			<div id="load-status" class="big-text light-text">loading tweets</div>
+			<img id="loader" src="./img/loader.gif">
+		</p>
+		<p > <span id="user-detail" ></span> | 
+		<a id="change-user-btn" href="#">Change User</a>
+		</p>
+	</div>
+
+	<div id="view-menu">
+	<p>Select the info you would like to view for this user:</p>
+		<div id="tweets-btn" class="view-button">Tweets</div>
+		<div id="timeline-btn" class="view-button">Timeline</div>
+		<div id="likes-btn" class="view-button">Likes</div>
+	</p>
+	<p>
+		<div id="following-btn" class="view-button">Following</div>
+		<div id="followers-btn" class="view-button">Followers</div>
+	</div>
+	
+	<div id="results">
+		<ul>
+		</ul>
+	</div> 
+
+	<p class="aside">
+		Note: Twitter limits the number of tweets returned to 3,200, or 800 for user timeline.
+	</p>
+
+	<div id="widget-outer">
+	<a href="https://twitter.com/felixturner?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-size="large" data-show-screen-name="true" data-show-count="true">Follow @felixturner</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+	</div>
+
+	<div id="footer">
+		<p id="copy">© 2023 <a href="http://airtight.cc">Airtight Interactive Inc.</a> | <a href="https://twitter.com/felixturner">Feedback? </a> | <a href="./clearsessions.php">Sign Out</a></p>
+	</p>
+	</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+	<script src="js/jquery.linkify.min.js"></script>
+	<script>
+    var _authName = 'neely615';
+	</script>
+	<script src="js/main.js"></script>
+	
+</body>
+
+</html>
