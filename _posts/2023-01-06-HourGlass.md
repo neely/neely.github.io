@@ -32,7 +32,7 @@ I am about to leave work for the weekend, so this is a completely fresh example.
 This is a horrible paragraph, but the point is that I wrote something down. If I had an actual outline with actual references you can see that this could easily create the bones of a paragraph quite easily. And really, that is the goal when you have writer's block: get something down and come back to it later.
 
 
-##But let's get ChatGPT involved too and compare notes## 
+## But let's get ChatGPT involved too and compare notes
 
 
 There are some resources around that describe what a good abstract is (ex. [Nature Summary Paragraph](http://www.cbs.umn.edu/sites/default/files/public/downloads/Annotated_Nature_abstract.pdf)), but since we are on this LLM ChatGPT kick, I wanted to see if ChatGPT could write me something, but then also tell me what the paragraph structure it used was. I am going to stick with an abstract in Nature. I really want to be clear I wrote the paragraph above first and then the following happened.
