@@ -2,21 +2,23 @@
 layout: post
 title:  The Hourglass Paragraph Structure
 categories: [writing, ChatGPT]
-excerpt: As a post-doc we had a grant writing class, and Dr. Ed Krug introduced to me to one of my failsafe writing crutches, the hourglass paragraph structure 
+excerpt: As a post-doc we had a grant writing class, and Dr. Ed Krug introduced to me to one of my failsafe writing crutches, the hourglass paragraph structure. 
 ---
 
-As a post-doc at MUSC we had a grant writing class, and [Dr. Ed Krug](https://education.musc.edu/MUSCApps/facultydirectory/Krug-Edward) introduced me to one of my failsafe writing crutches: the hourglass paragraph structure (note: I don't know if this is an actual term, though it does sound very official). I am not 100 % sure this is exactly what Ed taught us, but over the years this is how I implement it to write paragraphs in introduction and discussion sections of papers when I am stuck. I am not an exceptional writer by any means, and like all writers I sometimes have trouble getting things on paper. This trick doesn't work without a general outline, so note that my first step is to outline out what a paper could look like, or at least sections. I am very vanilla here with fiver paragraphs being great and typically focusing on the top three take home points. For this example, I assume the outline came easy and I am now making it into actual sentences. 
+As a post-doc at MUSC we had a grant writing class, and [Dr. Ed Krug](https://education.musc.edu/MUSCApps/facultydirectory/Krug-Edward) introduced me to one of my failsafe writing crutches: the hourglass paragraph structure (note: I don't know if this is an actual term, though it does sound very official). I am not 100 % sure this is exactly what Ed taught us, but over the years this is how I implement it to write paragraphs in introduction and discussion sections of papers when I am stuck. I am not an exceptional writer by any means, and like all writers I sometimes have trouble getting things on paper. This formulaic trick doesn't work without a general outline first, so note that my first step is to outline out what a paper could look like, or at least sections. I am very vanilla here with the classic five paragraphs (start, 3 points, end) and typically focusing on the top three take home points (for intro or discussion sections). But onto the actual hourglass paragraph formula.
 
-The hourglass structure is start broad, go specific, and come back out broad.
+**The hourglass structure is start broad, go specific, and come back out broad.**
 
 Specifically, it is:
 1. Broad statement, often leading from the last paragraph.
 2. Some slightly specific statement derived/within that broad statement.
-3. Supporting/Contrary example of specific statement (literature or in results).
-4. Supporting/Contrary example of specific statement (literature or in results).
-5. Supporting/Contrary example of specific statement (literature or in results).
-6. Bring it back to the specific statement but in frame of broad statement (possibly with the next parapgraph in mind).
+3. Supporting/Contrary example of specific statement 1 (based on literature or results).
+4. Supporting/Contrary example of specific statement 2 (based on literature or results).
+5. Supporting/Contrary example of specific statement 3 (based on literature or results).
+6. Bring it back to the specific statement but in context of initial broad statement (possibly with the next parapgraph in mind).
 
+
+## You can stop reading here, but below is an off the cuff example.
 
 I am about to leave work for the weekend, so this is a completely fresh example. I am going to use a fictitious example of why pelicans shouldn't be pets. Excuse me if this is horrible, I am just tossing this down and it was the easiest idea that came to mind.
 
@@ -29,7 +31,11 @@ I am about to leave work for the weekend, so this is a completely fresh example.
 
 This is a horrible paragraph, but the point is that I wrote something down. If I had an actual outline with actual references you can see that this could easily create the bones of a paragraph quite easily. And really, that is the goal when you have writer's block: get something down and come back to it later.
 
-There are some resources around that describe what a good abstract is, etc. but since we are on this LLM ChatGPT kick, I wanted to see if ChatGPT could write me something, but then also tell me what the paragraph structure it used was. I am going to stick with an abstract in Nature. I really want to be clear I wrote the paragraph above first and then the following happened.
+
+##But let's get ChatGPT involved too and compare notes## 
+
+
+There are some resources around that describe what a good abstract is (ex. [Nature Summary Paragraph](http://www.cbs.umn.edu/sites/default/files/public/downloads/Annotated_Nature_abstract.pdf)), but since we are on this LLM ChatGPT kick, I wanted to see if ChatGPT could write me something, but then also tell me what the paragraph structure it used was. I am going to stick with an abstract in Nature. I really want to be clear I wrote the paragraph above first and then the following happened.
 
 **Me**: Can you write a 200 word abstract for the journal Nature Methods that describes the problem with people keeping pelicans as pets, with some issues including feed and care, and being attacked by the pet pelican.
 
