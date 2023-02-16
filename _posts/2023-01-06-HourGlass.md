@@ -35,7 +35,7 @@ This is a horrible paragraph, but the point is that I wrote something down. If I
 ## But let's get ChatGPT involved too and compare notes
 
 
-There are some resources around that describe what a good abstract is (ex. [Nature Summary Paragraph](http://www.cbs.umn.edu/sites/default/files/public/downloads/Annotated_Nature_abstract.pdf)), but since we are on this LLM ChatGPT kick, I wanted to see if ChatGPT could write me something, but then also tell me what the paragraph structure it used was. I am going to stick with an abstract in Nature. I really want to be clear I wrote the paragraph above first and then the following happened.
+There are some resources around that describe what a good abstract is (ex. [Nature Summary Paragraph](http://www.cbs.umn.edu/sites/default/files/public/downloads/Annotated_Nature_abstract.pdf), or [abstracts in general](https://twitter.com/acagamic/status/1617537771735846915?s=20)), but since we are on this LLM ChatGPT kick, I wanted to see if ChatGPT could write me something, but then also tell me what the paragraph structure it used was. I am going to stick with an abstract in Nature. I really want to be clear I wrote the paragraph above first and then the following happened.
 
 **Me**: Can you write a 200 word abstract for the journal Nature Methods that describes the problem with people keeping pelicans as pets, with some issues including feed and care, and being attacked by the pet pelican.
 
