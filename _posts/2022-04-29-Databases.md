@@ -116,7 +116,7 @@ To retrieve a protein sequence collection from Ensemble at any of the portals, a
 
 Ensembl provides a release number for all the databases within each portal. Similar to the UniProt file naming suggestion, the following naming format is suggested for Ensembl protein sequence collection FASTA (the use of underscores or hyphens is not critical):
 ```
-\[common or scientific name\]-\[taxon id\]-ensembl-\[abinitio/all\]-\[rapid\]-\[release number\]
+[common or scientific name]-[taxon id]-ensembl-[abinitio/all]-[rapid]-[release number]
 ```
 example of a pig protein FASTA from Ensembl:
 ```
