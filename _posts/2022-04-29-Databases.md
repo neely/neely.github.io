@@ -31,7 +31,7 @@ Equus_caballus-9796-refseq-103.fasta
 
 ## Ensembl
 ```
-\[common or scientific name\]-\[taxon id\]-ensembl-\[abinitio/all\]-\[rapid\]-\[release number\]
+[common or scientific name]-[taxon id]-ensembl-[abinitio/all]-[rapid]-[release number]
 ```
 example of a pig protein FASTA from Ensembl:
 ```
