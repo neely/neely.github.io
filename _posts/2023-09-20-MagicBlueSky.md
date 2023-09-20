@@ -27,6 +27,7 @@ Okay, but going back to my post last year, what was the function of sciTwitter a
 - no Spaces thingy
 - Will I be able to access everything via an "AllMyTweets" type service
 - I can view all my follows without worrying about servers or truncated conversation threads
+- Having custom feeds to flip through on the app or webUI is a really fun hack I didn't think I would like as much as I do ([here](https://docs.google.com/spreadsheets/d/1tJw1r_Dif9AN6lVNNaZ-nwDdbM7tPemobo5_S2aEl_U/edit) are more science ones)
 
 
 I may add more here later.
