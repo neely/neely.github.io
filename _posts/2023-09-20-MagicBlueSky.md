@@ -9,7 +9,7 @@ Last fall I wrote about what was going on with the initial Twitter exodus, and t
 
 So here is my effort to again present what I know and like about BlueSky, and what they present as their future plans (not exhaustive):
 - [Algorithm Choice with Custom Feeds](https://blueskyweb.xyz/blog/7-27-2023-custom-feeds) and [another](https://www.engadget.com/bluesky-now-lets-you-choose-your-own-algorithm-183824105.html)
-- [BlueSky for Scientists](https://docs.google.com/document/d/1aPddaH-d7N53jZm1S3vUrfjVVy5nykPQz6qd7QpPCQE/edit#heading=h.58mkl21vxs3mhttps://docs.google.com/document/d/1aPddaH-d7N53jZm1S3vUrfjVVy5nykPQz6qd7QpPCQE/edit#heading=h.58mkl21vxs3m)
+- [BlueSky for Scientists](https://docs.google.com/document/d/1aPddaH-d7N53jZm1S3vUrfjVVy5nykPQz6qd7QpPCQE/edit#heading=h.58mkl21vxs3m) - this has a tool to scrape your twitter follows and get them into BlueSky
 - [Vox article on Blue Sky](https://www.vox.com/technology/2023/4/29/23702979/bluesky-twitter-elon-musk-jack-dorsey-chrissy-teigen-aoc-dril-decentralized)
 - [BlueSky's Business Plan](https://blueskyweb.xyz/blog/7-05-2023-business-plan)
 
