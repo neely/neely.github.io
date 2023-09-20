@@ -19,14 +19,14 @@ Feed Update: [ProteomicSky](https://bsky.app/profile/did:plc:gl7bvz3uo4ym2fnmvgk
 
 
 Okay, but going back to my post last year, what was the function of sciTwitter and what are we getting right/wrong.
-- posts are not public (yet), so no sharing
+- Posts are not public (yet), so public SciComm sharing doesn't work (yet)
 - AltMetric isn't here (but it isn't anywhere but Twitter, yet)
-- Many of my nonScience follows (think cycling, weather, sports) are on X or Threads, not here (this is still a big bummer to me about the whole twitter exodus)
+- Many of my nonScience follows (think cycling, weather, sports) are on X or Threads, but not here (this is still a big bummer to me about the whole twitter exodus)
 - There is no BlueSky DM
 - There is some promising options for feeds and I think just maybe folks will migrate
-- no Spaces thingy
-- Will I be able to access everything via an "AllMyTweets" type service
-- I can view all my follows without worrying about servers or truncated conversation threads
+- No Spaces thingy, but POTRH has some plans if needed (Discord I think)
+- Will I be able to access everything via an "AllMyTweets" type service?
+- I *can* view all my follows without worrying about servers or truncated conversation threads (looking at you Mastodon)
 - Having custom feeds to flip through on the app or webUI is a really fun hack I didn't think I would like as much as I do ([here](https://docs.google.com/spreadsheets/d/1tJw1r_Dif9AN6lVNNaZ-nwDdbM7tPemobo5_S2aEl_U/edit) are more science ones)
 
 
