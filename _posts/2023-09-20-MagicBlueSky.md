@@ -25,8 +25,10 @@ Okay, but going back to my post last year, what was the function of sciTwitter a
 - Posts are not public (yet), so public SciComm sharing doesn't work (yet)
 - AltMetric isn't here (but it isn't anywhere but Twitter, yet)
 - Many of my nonScience follows (think cycling, weather, sports) are on X or Threads, but not here (this is still a big bummer to me about the whole twitter exodus)
-- No Bluesky DMs
-- No GIFs (even Mastodon has this baked into most apps). Funny, last fall this was a deal breaker for me, but now I'd consider it lower on my list.
+- No Bluesky DMs ([feature is coming](https://docs.google.com/document/d/1aPddaH-d7N53jZm1S3vUrfjVVy5nykPQz6qd7QpPCQE/edit#heading=h.58mkl21vxs3m))
+- No GIFs ([feature is coming](https://docs.google.com/document/d/1aPddaH-d7N53jZm1S3vUrfjVVy5nykPQz6qd7QpPCQE/edit#heading=h.58mkl21vxs3m))
+- No post editing (most Mastodon clients have a pretty nifty "edit" feature, which is essentially is a delete a re-post, but it works well)
+- No polls
 - No Spaces thingy, but POTRH has some plans if needed (Discord I think)
 - No pinned post (not a deal breaker, but I liked this feature)
 - No verification, unless you count using custom domain handle (for comparison, some Mastodon servers let you verify yourself with your domain). I don't think this is essential, but is a point to mention.
