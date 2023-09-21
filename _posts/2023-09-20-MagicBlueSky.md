@@ -19,15 +19,19 @@ Feed Update: [ProteomicSky](https://bsky.app/profile/did:plc:gl7bvz3uo4ym2fnmvgk
 
 
 Okay, but going back to my post last year, what was the function of sciTwitter and what are we getting right/wrong.
+- Posts are technically called skeets (akin to toots or tweets)
+- There are "Repost" and "Quote Post" options (quote posting is still a contentious topic on Mastodon)
+- Has an app and webUI, and they are pretty good (specifically controlling feeds and moderation are really cool)
 - Posts are not public (yet), so public SciComm sharing doesn't work (yet)
 - AltMetric isn't here (but it isn't anywhere but Twitter, yet)
 - Many of my nonScience follows (think cycling, weather, sports) are on X or Threads, but not here (this is still a big bummer to me about the whole twitter exodus)
-- There is no Bluesky DM
-- There is some promising options for feeds and I think just maybe folks will migrate
+- No Bluesky DMs
+- No GIFs (even Mastodon has this baked into most apps)
 - No Spaces thingy, but POTRH has some plans if needed (Discord I think)
+- No pinned post (not a deal breaker, but I liked this feature)
 - Will I be able to access everything via an "AllMyTweets" type service?
 - I *can* view all my follows without worrying about servers or truncated conversation threads (looking at you Mastodon)
-- Having custom feeds to flip through on the app or webUI is a really fun hack I didn't think I would like as much as I do ([here](https://docs.google.com/spreadsheets/d/1tJw1r_Dif9AN6lVNNaZ-nwDdbM7tPemobo5_S2aEl_U/edit) are more science ones)
+- Custom feeds are becoming more and more the main selling point, imo (make your feed and UI exactly what *you* want). Having custom feeds to flip through on the app or webUI is a really fun hack I didn't think I would like as much as I do ([here](https://docs.google.com/spreadsheets/d/1tJw1r_Dif9AN6lVNNaZ-nwDdbM7tPemobo5_S2aEl_U/edit) are more science ones)
 
 
 I may add more here later.
