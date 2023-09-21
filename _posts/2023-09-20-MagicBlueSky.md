@@ -32,6 +32,7 @@ Okay, but going back to my post last year, what was the function of sciTwitter a
 - No Spaces thingy, but POTRH has some plans if needed (Discord I think)
 - No pinned post (not a deal breaker, but I liked this feature)
 - No verification, unless you count using custom domain handle (for comparison, some Mastodon servers let you verify yourself with your domain). I don't think this is essential, but is a point to mention.
+- No hashtags, but this is [by design](https://github.com/bluesky-social/proposals/tree/main/0003-hashtags), and custom feeds are the answer instead
 - Will I be able to access everything via an "AllMyTweets" type service?
 - I *can* view all my follows without worrying about servers or truncated conversation threads (looking at you Mastodon)
 - Custom feeds are becoming more and more the main selling point, imo (make your feed and UI exactly what *you* want). Having custom feeds to flip through on the app or webUI is a really fun hack I didn't think I would like as much as I do ([here](https://docs.google.com/spreadsheets/d/1tJw1r_Dif9AN6lVNNaZ-nwDdbM7tPemobo5_S2aEl_U/edit) are more science ones)
