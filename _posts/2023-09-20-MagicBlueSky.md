@@ -9,7 +9,7 @@ Last fall I wrote about what was going on with the initial Twitter exodus, and t
 
 &nbsp;  
 
-So here is my effort to again present what I know and like about Bluesky, and what they present as their future plans (not exhaustive):
+So here is my effort to present what I know and like about Bluesky, and what are their future plans (not exhaustive):
 - [Algorithm Choice with Custom Feeds](https://blueskyweb.xyz/blog/7-27-2023-custom-feeds) and [another](https://www.engadget.com/bluesky-now-lets-you-choose-your-own-algorithm-183824105.html)
 - [BlueSky for Scientists](https://docs.google.com/document/d/1aPddaH-d7N53jZm1S3vUrfjVVy5nykPQz6qd7QpPCQE/edit#heading=h.58mkl21vxs3m) - this has a tool to scrape your twitter follows and get them into Bluesky
 - [Vox article on Bluesky](https://www.vox.com/technology/2023/4/29/23702979/bluesky-twitter-elon-musk-jack-dorsey-chrissy-teigen-aoc-dril-decentralized)
@@ -21,7 +21,7 @@ For me, it clicked today when I made a custom proteomics feed using the skyfeed.
 
 &nbsp;  
 
-Feed Update: [ProteomicSky](https://bsky.app/profile/did:plc:gl7bvz3uo4ym2fnmvgkjzeb3/feed/aaakx5my5bkl2) is chronological and [ProteomicSky-Hot](https://bsky.app/profile/did:plc:gl7bvz3uo4ym2fnmvgkjzeb3/feed/aaalgayjgixrs) is last 24 h sorted by likes (may adjust to 3 days).
+Feed Update: [ProteomicSky](https://bsky.app/profile/did:plc:gl7bvz3uo4ym2fnmvgkjzeb3/feed/aaakx5my5bkl2) is chronological and [ProteomicSky-Hot](https://bsky.app/profile/did:plc:gl7bvz3uo4ym2fnmvgkjzeb3/feed/aaalgayjgixrs) is last 3 days sorted by likes.
 
 &nbsp;
 
@@ -40,7 +40,7 @@ Okay, but going back to my post about Mastodon last year, what *was* the functio
 - No pinned post (not a deal breaker, but I liked this feature)
 - No verification, unless you count using custom domain handle (for comparison, some Mastodon servers let you verify yourself with your domain). I don't think this is essential, but is a point to mention.
 - Hashtags aren't really what they are on other sites (autosuggestable clickable aggregators), but this is [by design](https://github.com/bluesky-social/proposals/tree/main/0003-hashtags), and custom feeds are the answer instead
-- Lingering quesiont of will I be able to access everything via an "AllMyTweets" type service?
+- Lingering question of will I be able to access everything via an "AllMyTweets" type service?
 - I *can* view all my follows without worrying about servers or truncated conversation threads (looking at you Mastodon)
 - Custom feeds are becoming more and more the main selling point, imo (make your feed and UI exactly what *you* want). Having custom feeds to flip through on the app or webUI is a really fun hack I didn't think I would like as much as I do ([here](https://docs.google.com/spreadsheets/d/1tJw1r_Dif9AN6lVNNaZ-nwDdbM7tPemobo5_S2aEl_U/edit) are more science ones)
 
