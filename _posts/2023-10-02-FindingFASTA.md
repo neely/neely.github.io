@@ -47,17 +47,17 @@ Unsurprisingly, that top order with 615k entries is kind of a mess imo since [th
 
 In that [talk](https://zenodo.org/record/3687161) (around slide 22, is about elephant seal), my "easy" method is that at this point you can take two approaches, which assume you have some mass spec data to search.
 
-*Approach 1:* take the UniProt (sp + tr) sequences for each taxon ID and search the data three ways:
-+ all entries in genus
-+ all entries in family
-+ all entries in order
+* *Approach 1:* take the UniProt (sp + tr) sequences for each taxon ID and search the data three ways:
+	+ all entries in genus
+	+ all entries in family
+	+ all entries in order
 
 &nbsp;
 
-*Approach 2:* use the species-specific genome annotations on NCBI retrieved from Datasets or RefSeq Pipeline Page (or [UniProt proteomes](https://www.uniprot.org/proteomes?query=Araneae+AND+%28taxonomy_id%3A6893%29)) and search the data three ways:
-+ all species in genus (there isn't one in our black widow example, so skip this)
-+ all entries in family
-+ all entries in order
+* *Approach 2:* use the species-specific genome annotations on NCBI retrieved from Datasets or RefSeq Pipeline Page (or [UniProt proteomes](https://www.uniprot.org/proteomes?query=Araneae+AND+%28taxonomy_id%3A6893%29)) and search the data three ways:
+	+ all species in genus (there isn't one in our black widow example, so skip this)
+	+ all entries in family
+	+ all entries in order
 
 &nbsp;
 
