@@ -20,11 +20,11 @@ I am not talking about, "does it have sequences on UniProt", but does this speci
 
 **What related species *are* annotated?**
 
-Sticking on NCBI datasets cause you can browse the taxonomy and then filter the resulting table by annotations (not just assemblies). Within the Araneae order (taxon ID 6893; aka spiders) there are something like 15 spider genome annotations [https://www.ncbi.nlm.nih.gov/datasets/genome/?taxon=6893&annotated_only=true&refseq_annotation=true&genbank_annotation=true](https://www.ncbi.nlm.nih.gov/datasets/genome/?taxon=6893&annotated_only=true&refseq_annotation=true&genbank_annotation=true). This is a good sign that at least some spider work is being done. If you get to higher taxon levels like order and nothing is turning up, you could be in for a very long road.
+Lets stay on NCBI Datasets and browse the taxonomy (it's an option to click). So I went up to the Araneae order (taxon ID 6893; aka spiders), clicked the 43 genomes, and then and then filtered the resulting table by annotations (so not just assemblies), and there are something like [15 spider species with genome annotations](https://www.ncbi.nlm.nih.gov/datasets/genome/?taxon=6893&annotated_only=true&refseq_annotation=true&genbank_annotation=true). This is a good sign that at least some spider work is being done. If you get to higher taxon levels like order and nothing is turning up, you could be in for a very long road.
 
 &nbsp;
 
-But, the *Lactrodectus* genus (aka black widows) is under the Theridiidae family (taxon ID 34643; aka cobweb weavers), and so of those 15 annotations, only one cobweb weaver is annotated, [the house spider](https://www.ncbi.nlm.nih.gov/datasets/taxonomy/114398/). This is important as this house spider should be the most closely related to our black widow, and especially in insects/birds/plants/fish/non-mammmals, there is so much diversity that we can't safely assume moving beyond family level (or even genus level in some cases) that we will have sequence conservation to lean on for mass spec data searching (this is a gamble on mammals that normally pays off; again, see that talk in first paragraph).
+I wanted to know if something was closer than just Order-level related. The *Lactrodectus* genus (aka black widows) is under the Theridiidae family (taxon ID 34643; aka cobweb weavers), and so of those 15 Araneae annotations, only one Theridiidae family spider is annotated, [the house spider](https://www.ncbi.nlm.nih.gov/datasets/taxonomy/114398/). This is important as this house spider should be the most closely related to our black widow, and especially in insects/birds/plants/fish/non-mammmals, there is so much diversity that we can't safely assume moving beyond family level (or even genus level in some cases) that we will have sequence conservation to lean on for mass spec data searching (this is a gamble on mammals that normally pays off; again, see that talk in first paragraph). Maybe not great, but it is something to check performance on and at least know we are in the ballpark.
 
 &nbsp;
 
@@ -61,7 +61,7 @@ In that [talk](https://zenodo.org/record/3687161) (around slide 22, is about ele
 
 &nbsp;
 
-The idea is to see the number of PSMs change with each search space addition. Your "best" search space will be the highest number. This is nice as well since if your search algorithm penalizes larger spaces (that is normal) then you should see diminishing returns as you increase your fasta size.
+The idea is to see the number of PSMs change with each search space addition. Your "best" search space will be the highest number. This is nice as well since if your search algorithm penalizes larger spaces (that is normal) then you should see diminishing returns as you increase your fasta size. Finally, a rule of thumb for DDA data: in tissues I would like to see 30-50 % of MS/MS get IDs, and for blood it can be closer to 20 - 30 %. Overall, worst case these non-species specific fasta should be getting at least 10 % for me not to feel horrible about the life choices that brought us to this situation (i.e., think about annotating an available genome assembly myself).
 
 &nbsp;
 
