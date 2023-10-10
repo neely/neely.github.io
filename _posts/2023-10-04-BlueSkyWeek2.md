@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Bluesky Week 2 - here for good
+title:  Bluesci Week 2 - here for good
 categories: [social media, Twitter, SciTwitter, ProteomicSky, TeamMassSpec]
 excerpt: To no one who should care, I am fine moving over to Bluesky as my daily driver
 ---
@@ -24,6 +24,7 @@ Feeds to know (I will add to this):
 - [ProteomicSky](https://bsky.app/profile/did:plc:gl7bvz3uo4ym2fnmvgkjzeb3/feed/aaakx5my5bkl2) is chronological
 - [ProteomicSky-Hot](https://bsky.app/profile/did:plc:gl7bvz3uo4ym2fnmvgkjzeb3/feed/aaalgayjgixrs) is last 3 days sorted by likes
 - [MassSpecSky](https://bsky.app/profile/did:plc:wtkjo7nc6ijkzwp44pqgsvre/feed/aaanf23wnf5si) is a really good feed by ASMS
+- [MassSpecHelp](https://bsky.app/profile/did:plc:gl7bvz3uo4ym2fnmvgkjzeb3/feed/aaalqopkzsibe) respun MassSpecSky and ProteomicSky to collect posts asking for help for all things mass spec. Use #massSOS or if you forget, it should find any combo of mass spec-y terms + help or SOS or hivemind or consult. Sorting is chronological.
 - [For You](https://bsky.app/profile/did:plc:wqowuobffl66jv3kpsvo7ak4/feed/the-algorithm) I don't understand this one exactly, but it is my go to before the default feeds of "Popular with Friends" and "Discover"
 - Any custom feed I make on a whim (make a conference one, make one for all the preprints, make one that just shows me what my follows are liking, etc.)
 
