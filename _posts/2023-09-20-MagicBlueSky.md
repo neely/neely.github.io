@@ -47,7 +47,7 @@ Okay, but going back to my post about Mastodon last year, what *was* the functio
 
 &nbsp;
 &nbsp;
-I may add more here later.
+I wrote a follow up to this after a couple weeks using it, with some final thoughts. Check it out [here](https://neely.github.io/BlueSkyWeek2/).
 
 
 &nbsp;  
