@@ -18,7 +18,12 @@ Videos:
 
 [May Institute](https://www.youtube.com/@MayInstituteNEU) - Stats!
 
+[Mass Spec Everything w/Ben Katz](https://www.youtube.com/c/MyMassSpecWorld)
+
 [Requisite flying ion video, but no dubstep](https://www.thermofisher.com/us/en/home/industrial/mass-spectrometry/liquid-chromatography-mass-spectrometry-lc-ms/lc-ms-systems/orbitrap-lc-ms/stellar-mass-spectrometer/stellar-mass-spectrometer-systems.html) - Stellar video; skip first minute or so
+fusion lumos https://www.thermofisher.com/order/catalog/product/FETD2-10002?SID=srch-srp-FETD2-10002
+agilent q-tof https://www.youtube.com/watch?v=W-DRL-V2Rkg
+sciex q-trap https://www.youtube.com/watch?v=VUmcxNLHu4Y
 
 Great (Not So) British Proteomics Bake Off Videos
 PAW Pipeline - https://www.youtube.com/watch?v=ycRccM1myDE
@@ -36,6 +41,8 @@ Ron Beavis website with all sorts of things (https://www.somecrazyblogger.org/a/
 
 
 Tutorial/Overview Papers:
+
+[The Anatomy and Taxonomy of Protein Structure by Jane S. Richardson](http://kinemage.biochem.duke.edu/teaching/anatax)
 
 Shuken 2023 - An Introduction to Mass Spectrometry-Based Proteomics https://pubs.acs.org/doi/10.1021/acs.jproteome.2c00838
 
@@ -65,6 +72,9 @@ Ours
 
 Dayhoff review
 
+[The history and philosophy of science: a taxonomy by Ernan McMullin, 1970](https://conservancy.umn.edu/items/7bd1d1ca-d748-4186-abd5-742af07e6aa9)
+
+The backstory behind the FASTA format https://youtu.be/7LA0IKsVloU
 
 Other fav papers:
 
@@ -78,6 +88,8 @@ mRNA v Protein
 https://www.mcponline.org/article/S1535-9476(23)00098-1/fulltext
 https://www.nature.com/articles/s41576-020-0258-4
 
+
+[30 essays on biology](https://www.nikomccarty.com/p/30-essays)
 
 Other blogs of note (not proteomics):
 
