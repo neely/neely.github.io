@@ -74,7 +74,11 @@ Dayhoff review
 
 [The history and philosophy of science: a taxonomy by Ernan McMullin, 1970](https://conservancy.umn.edu/items/7bd1d1ca-d748-4186-abd5-742af07e6aa9)
 
+[The origin of the single-letter code for the amino acids - Dr. Margaret Oakley Dayhoff](https://biology.arizona.edu/biochemistry/problem_sets/aa/Dayhoff.html)
+
 The backstory behind the FASTA format https://youtu.be/7LA0IKsVloU
+
+Hunt Lab Guide to de novo https://www.mcponline.org/article/S1535-9476(24)00165-8/fulltext
 
 Other fav papers:
 
