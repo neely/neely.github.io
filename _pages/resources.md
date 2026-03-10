@@ -60,6 +60,8 @@ Kall 2008 - Posterior error probabilities and false discovery rates: two sides o
 
 Kall 2008 - Assigning Significance to Peptides Identified by Tandem Mass Spectrometry Using Decoy Databases https://pubs.acs.org/doi/10.1021/pr700600n
 
+https://www.nature.com/articles/s41580-020-0231-2
+
 MacCoss QC
 RapidQC
 Our QC
