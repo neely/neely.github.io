@@ -67,6 +67,8 @@ RapidQC
 Our QC
 Chiva 2021 and 2024 QC framework with Core for Life alliance (https://coreforlife.eu)
 
+https://link.springer.com/article/10.1186/s12910-026-01409-3
+
 
 History
 
