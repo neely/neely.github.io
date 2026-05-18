@@ -29,7 +29,7 @@ We started with this prompt:
   
 Response: Here's a full plan for the tilt-maze game, structured as a handoff document we can refer back to as we build each piece.
 
-![Claude's Master Plan](images/maze_game_handoff_plan.svg)
+![Claude's Master Plan](/images/maze_game_handoff_plan.svg)
 
 Here's the full breakdown of what we'll build and in what order:
 
