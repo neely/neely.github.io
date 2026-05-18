@@ -19,11 +19,11 @@ If you want to check out the final product, here is the [app](https://apps.benne
 
 We started with this prompt:
 
-```text
-We are going to make a game to play on my phone, but we are going to serve it as a static html file. We think the game would be a maze and you have to tilt the phone to make a ball roll around in the maze to get from one end to another. There will be levels, make them fun with some silliness or obstacles, and the goal is to see your highest level. I want the progress to be saved, either on local memory or as a json or something I can download.
 
-First, help me plan the steps to do this, which we will save as a handoff.
-```
+> We are going to make a game to play on my phone, but we are going to serve it as a static html file. We think the game would be a maze and you have to tilt the phone to make a ball roll around in the maze to get from one end to another. There will be levels, make them fun with some silliness or obstacles, and the goal is to see your highest level. I want the progress to be saved, either on local memory or as a json or something I can download.
+
+> First, help me plan the steps to do this, which we will save as a handoff.
+
 
 ### The Response & Master Plan
   
@@ -51,11 +51,10 @@ For each subsequent step, I would paste in these directions along with the HTML 
 
 For instance, Phase 3 started like this (apparently I was asking it to talk like a caveman to save on tokens):
 
-```text
-Phase 3: Persistence. We'll use localStorage to auto-save the highest level cleared every time you beat one. We'll also add a "Download Save" button that exports a tiny JSON file (so you can back it up or transfer it), plus an "Import Save" button to restore it — this is important since saved HTML files sometimes clear localStorage. 
+> Phase 3: Persistence. We'll use localStorage to auto-save the highest level cleared every time you beat one. We'll also add a "Download Save" button that exports a tiny JSON file (so you can back it up or transfer it), plus an "Import Save" button to restore it — this is important since saved HTML files sometimes clear localStorage. 
 
-Read the html, check for errors, and understand where we are. Respond like caveman with plan before execute.
-```
+> Read the html, check for errors, and understand where we are. Respond like caveman with plan before execute.
+
 
 Now the hardest part, and this is true in most larger projects, is that you need to not stray from the current step, skip forward or go backwards (as much as possible). In otherwords, in session 1 we spent a ton of time getting the physics right before moving on. At some point we did come back and remove the walls, and that caused some issues. Point it, if you can have some way to navigate sessions, asking for handoffs between steps and bring only files you need over (like the last version and maybe the master plan) you will have the greatest success, especially with an LLM like Claude that isn't going to do persistent memory by default.
 
