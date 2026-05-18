@@ -2,10 +2,12 @@
 layout: post
 title:  WIBTW - Tilt Maze Game
 categories: [agentic AI, LLM, game]
-excerpt: I wanted to get my son exposed to how to use LLMs more elgantly, so we made a game.
+excerpt: I wanted to get my son exposed to how to use LLMs more elgantly, so we made a game
 ---
 
 What I built this week (WIBTW), a Tilt Maze "game" (really just to demo what could be done). I wanted to get my son exposed to how to use LLMs more elgantly, so we made a game. The big thing I wanted him to see is that you don't just one shot something. You start first by planning, then break that plan into sessions (and handoff documents plus master plan document) that you start fresh each time. This makes the process more effecient by keeping within scope, limiting context rot, and also just making it easier, imo. Here is the final product btw, the [code](https://github.com/neely/apps/blob/main/tilt-maze.html) and the [app](https://apps.benneely.com/tilt-maze).
+
+
 ---
 
 ### The Initial Prompt
