@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  WILTW - Better ideating with hats?
-categories: [agentic AI, LLM, ideating]
+title:  Better ideating with hats?
+categories: [what I learned this week, agentic AI, LLM, ideating]
 excerpt: Can I make a team of agents help improve ideating
 ---
 

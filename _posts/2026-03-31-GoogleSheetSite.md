@@ -1,11 +1,11 @@
 ---
 layout: post
-title:  WIBTW - Google Sheet Site
-categories: [LLM, app, static html]
+title:  Google Sheet Site
+categories: [what I built this week, LLM, app, static html]
 excerpt: Sometimes maybe it is easier to serve a site from a google sheet
 ---
 
-What I built this week (WIBTW), a google sheet based site. The week prior I had started creating something using google workspace/drive since we use Gemini at work. Basically, can I harness a google form to fill out a google sheet and then read that sheet with static html as a dashboard. BUT, I didn't factor in weird permission stuff. Instead, and this is all in Gemini, I learned I can make code within the google sheet.
+What I built this week (WIBTW): a google sheet based site. The week prior I had started creating something using google workspace/drive since we use Gemini at work. Basically, can I harness a google form to fill out a google sheet and then read that sheet with static html as a dashboard. BUT, I didn't factor in weird permission stuff. Instead, and this is all in Gemini, I learned I can make code within the google sheet.
 
 &nbsp;
 This is what you end up with, btw, this is all completely ficticious. 

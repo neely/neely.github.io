@@ -1,11 +1,11 @@
 ---
 layout: post
-title:  WIBTW - Tilt Maze Game
-categories: [agentic AI, LLM, game]
+title:  Tilt Maze Game
+categories: [what I built this week, agentic AI, LLM, game]
 excerpt: I wanted to get my son exposed to how to use LLMs more elegantly, so we made a game.
 ---
 
-For "What I built this week" (WIBTW), I created a Tilt Maze game—really just a demo to show what's possible. My main goal was to expose my son to a more elegant way of using LLMs, so we decided to build this together. 
+For "What I built this week", I created a Tilt Maze game—really just a demo to show what's possible. My main goal was to expose my son to a more elegant way of using LLMs, so we decided to build this together. 
 
 The biggest lesson I wanted him to learn is that you don't just "one-shot" a project. Instead, you start by planning. You break that plan down into manageable sessions, creating a master plan and handoff documents so you can start fresh each time. 
 
