@@ -11,17 +11,18 @@ Okay, so I am realizing I subscribe to the idea (which I don't know where I read
 
 So, when I got back a manuscript I decided to reach for an LLM, but not intending to do the whole process. My first prompt was: 
 
-```
-I want your take on how manageable these two reviewer comments are. I am uploading the submitted manuscript, reviewer 1 is pasted and reviewer 2 is upload.
-```
+> I want your take on how manageable these two reviewer comments are. I am uploading the submitted manuscript, reviewer 1 is pasted and reviewer 2 is upload.
+
 
 and the LLM (btw, this was perplexity, which has a really fun "Best" model switcher) responds:
 
-```
-Both reviews are very positive on the core idea, and all of the requested changes are scientifically and rhetorically manageable for a revision; what varies is how much new work they imply.
 
-Below I’ll group the comments into “light edit,” “moderate edit,” and “substantial new work,” and flag where you can likely respond with framing/limitations text instead of new experiments.
-```
+> Both reviews are very positive on the core idea, and all of the requested changes are scientifically and rhetorically manageable for a revision; what varies is how much new work they imply.
+>
+> Below I’ll group the comments into “light edit,” “moderate edit,” and “substantial new work,” and flag where you can likely respond with framing/limitations text instead of new experiments.
+
+
+&nbsp;
 
 How encouraging was that? I mean, I knew there was a path forward but here was something that was laying it all out, and so instead of me using all of this mental work to come to terms with it, I had very discrete and explicit decisions to be made, and then I could just do it.
 
