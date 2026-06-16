@@ -20,12 +20,16 @@ Autosave
 
 Edit and rename
 
-Load an existing post via the picker
+✅ Load an existing post via the picker
 
-Change the title
+✅ Change the title
 
-Publish
+✅ Publish
 
 Check GitHub _posts/ — old file gone, new file present
 
+   no, the test 5 and test 5 edit are both there
+
 If delete fails, confirm you see a red toast naming the old file
+
+   I don't know what a red toast naming is, but above the file there is an x that says failure. some have a green check mark. I can't describe well where this is. like after file name above edit window,
