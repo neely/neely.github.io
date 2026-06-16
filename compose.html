@@ -598,6 +598,8 @@ let sourceDraftPath = null; // set when loading a draft; cleared on publish/rese
 let sourcePostPath  = null; // set when loading any existing post/draft path
 let saveTimer    = null;
 let postsOpen    = false;
+let wcSaved      = false;
+let toastTimer   = null;
 let postsLoaded  = false;
 let currentTab   = 'write';
 let linkSelS     = 0, linkSelE = 0;
@@ -863,9 +865,6 @@ function onBodyInput() {
 }
 
 // ── WORD COUNT ────────────────────────────────────────────────────────────
-let wcSaved    = false;
-let toastTimer = null;
-
 function updateWC(clearSaved) {
   if (clearSaved) wcSaved = false;
   const b  = document.getElementById('md-area').value;
