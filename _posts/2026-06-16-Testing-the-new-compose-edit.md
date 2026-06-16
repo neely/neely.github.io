@@ -22,15 +22,24 @@ Alright, we have a new compose thing, which is super fun. Here is my testing to-
    I think the drafts directory went away when I removed the only draft.
 ✅ Images — paste a screenshot in the body, confirm it appears in the image list with the right path.
     the image doesn't render in preview, but maybe that is fine?
+
 ![](/images/2026-06-16-Testing-the-new-compose-edit/img1.jpg)
+
+
 
 ✅ Publish and confirm the image lands in /images/slug/img1.jpg on GitHub.
 ✅ GIF — tap + gif, pick a file, confirm it stages. Check the Markdown reference is in the body.
+
 ![](/images/2026-06-16-Testing-the-new-compose-edit/gif2.gif)
+
+
 
 ✅ Handoff — attach a .md file, confirm it appears in the list, tap copy link, paste somewhere and confirm the URL looks right. Publish and confirm it lands in /shared/.
 [view handoff](https://neely.github.io/shared/2026-06-16-Testing-the-new-compose-edit/README.md)
+
 ✅ Light/dark — toggle, confirm it persists on reload.
 
 
-On reload I lose the images and handoff docs listed, but the links are still in.
+On reload I lose the images (so the code is still there to link but I don't think they loaded) but the handoff docs was linked, but all the images and handoff staged areas were blank.
+
+Actually on reload I don't see a publish button. This might be a real issue that there should always be a publish button, not something that changes to "Published check mark"
