@@ -857,23 +857,27 @@ document.getElementById('link-input').addEventListener('keydown', e => {
 });
 
 function onBodyInput() {
-  updateWC(); scheduleSave();
+  updateWC(true); // clears "saved" the moment you type
+  scheduleSave();
   if (currentTab === 'raw') setTab('raw');
 }
 
 // ── WORD COUNT ────────────────────────────────────────────────────────────
-function updateWC() {
-  const b = document.getElementById('md-area').value;
-  const w = b.trim() ? b.trim().split(/\s+/).length : 0;
-  document.getElementById('wc-line').textContent = `${w} words · ${b.length} chars`;
+let wcSaved = false;
+
+function updateWC(clearSaved) {
+  if (clearSaved) wcSaved = false;
+  const b  = document.getElementById('md-area').value;
+  const w  = b.trim() ? b.trim().split(/\s+/).length : 0;
+  const el = document.getElementById('wc-line');
+  el.textContent = wcSaved
+    ? `${w} words · ${b.length} chars · saved`
+    : `${w} words · ${b.length} chars`;
 }
 
 function flashSaved() {
-  const el = document.getElementById('wc-line');
-  const b  = document.getElementById('md-area').value;
-  const w  = b.trim() ? b.trim().split(/\s+/).length : 0;
-  el.textContent = `${w} words · ${b.length} chars · saved`;
-  setTimeout(() => { el.textContent = `${w} words · ${b.length} chars`; }, 1800);
+  wcSaved = true;
+  updateWC();
 }
 
 // ── LOAD EXISTING POSTS ───────────────────────────────────────────────────
@@ -1126,8 +1130,44 @@ function buildFrontMatter() {
   fm += '---\n';
   return fm;
 }
+function normaliseBody(raw) {
+  // Kramdown requires a blank line between paragraphs.
+  // Single newlines between text lines are joined by Kramdown into one line.
+  // So we ensure every non-empty line that isn't a block element is separated
+  // from the next by a blank line.
+  const lines = raw.split('\n');
+  const out   = [];
+  for (let i = 0; i < lines.length; i++) {
+    const line     = lines[i];
+    const nextLine = lines[i + 1];
+    out.push(line);
+    // If current line is non-empty and next line is non-empty,
+    // and neither is a list item / header / fence / blank — add blank line
+    if (
+      line.trim() !== '' &&
+      nextLine !== undefined &&
+      nextLine.trim() !== '' &&
+      !line.startsWith('#') &&
+      !line.startsWith('```') &&
+      !line.startsWith('- ') &&
+      !line.startsWith('> ') &&
+      !/^\d+\.\s/.test(line) &&
+      !nextLine.startsWith('#') &&
+      !nextLine.startsWith('```') &&
+      !nextLine.startsWith('- ') &&
+      !nextLine.startsWith('> ') &&
+      !/^\d+\.\s/.test(nextLine)
+    ) {
+      out.push('');
+    }
+  }
+  // Collapse 3+ consecutive blank lines to 2
+  return out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+
 function buildDocument() {
-  return buildFrontMatter() + '\n' + document.getElementById('md-area').value.trim() + '\n';
+  const body = normaliseBody(document.getElementById('md-area').value);
+  return buildFrontMatter() + '\n' + body + '\n';
 }
 
 // ── GITHUB API ────────────────────────────────────────────────────────────
@@ -1200,16 +1240,21 @@ async function publish() {
     // Covers: draft→post, post renamed, draft renamed
     if (sourcePostPath && sourcePostPath !== postPath) {
       try {
-        toast('Cleaning up old file…', '');
+        toast('Removing old file…', '');
         const oldSHA = await ghGetSHA(sourcePostPath);
         if (oldSHA) {
           await ghDelete(sourcePostPath, oldSHA, `Replace ${sourcePostPath} with ${postPath}`);
+          console.log('Deleted old file:', sourcePostPath);
+        } else {
+          console.warn('Old file not found on GitHub:', sourcePostPath);
         }
+      } catch(delErr) {
+        // Surface this clearly rather than swallowing it
+        console.error('Old file delete failed:', delErr);
+        toast(`Published ✓ but could not remove old file: ${sourcePostPath.split('/').pop()}`, 'err');
+      } finally {
         sourceDraftPath = null;
         sourcePostPath  = null;
-      } catch(delErr) {
-        console.warn('Old file delete failed:', delErr);
-        // Non-fatal — new file is already committed
       }
     } else {
       sourceDraftPath = null;
