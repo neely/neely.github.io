@@ -16,9 +16,21 @@ Alright, we have a new compose thing, which is super fun. Here is my testing to-
     The restore banner is awesome!
 ✅ Load picker — open it, confirm both _posts and _drafts show with correct pills. Load an existing post, confirm fields populate.
     This mostly works except Tilt Maze is rendering as its full slug, while others are small dates with just title shown clear.
-   Actually it is 2026-05-2-tiltMaze.md but when I have edited it now shows todays current date, June 16, 2025 and I can't seem to change it when I do edit.
 ✅ Draft flow — write something, toggle draft on, publish. Confirm _drafts/ gets the file on GitHub. Load it back, change the title, toggle draft off, publish. Confirm _posts/ gets the new file and _drafts/ loses the old one.
-Images — paste a screenshot in the body, confirm it appears in the image list with the right path. Publish and confirm the image lands in /images/slug/img1.jpg on GitHub.
-GIF — tap + gif, pick a file, confirm it stages. Check the Markdown reference is in the body.
-Handoff — attach a .md file, confirm it appears in the list, tap copy link, paste somewhere and confirm the URL looks right. Publish and confirm it lands in /shared/.
-Light/dark — toggle, confirm it persists on reload.
+   Actually it is 2026-05-2-tiltMaze.md but when I have edited it now shows todays current date, June 16, 2025 and I can't seem to change it when I do edit.
+   I think when you edit a title of something, it just makes a new file but keeps the old file.
+   I think the drafts directory went away when I removed the only draft.
+✅ Images — paste a screenshot in the body, confirm it appears in the image list with the right path.
+    the image doesn't render in preview, but maybe that is fine?
+![](/images/2026-06-16-Testing-the-new-compose-edit/img1.jpg)
+
+✅ Publish and confirm the image lands in /images/slug/img1.jpg on GitHub.
+✅ GIF — tap + gif, pick a file, confirm it stages. Check the Markdown reference is in the body.
+![](/images/2026-06-16-Testing-the-new-compose-edit/gif2.gif)
+
+✅ Handoff — attach a .md file, confirm it appears in the list, tap copy link, paste somewhere and confirm the URL looks right. Publish and confirm it lands in /shared/.
+[view handoff](https://neely.github.io/shared/2026-06-16-Testing-the-new-compose-edit/README.md)
+✅ Light/dark — toggle, confirm it persists on reload.
+
+
+On reload I lose the images and handoff docs listed, but the links are still in.
