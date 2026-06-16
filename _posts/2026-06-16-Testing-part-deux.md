@@ -62,6 +62,8 @@ Handoff
 Tap copy link → paste and confirm URL is correct
 Attach a second file → both appear independently
 ✅ Publish → both land in /shared/slug/
+II think calling this handoff no matter what isn't the right approach, but maybe I know to change the name, thinking of how this is useful to others, you want the link name to not be "handoff" as default. Could be "change name for URL hyperlink".
+[view handoff](https://neely.github.io/shared/2026-06-16-Testing-part-deux/README.md)
 
 Publish button
 
@@ -71,4 +73,4 @@ Success block shows file path and live URL
 
 ✅ Light/dark
 
-Toggle persists on reload
+✅ Toggle persists on reload
