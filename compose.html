@@ -1131,38 +1131,17 @@ function buildFrontMatter() {
   return fm;
 }
 function normaliseBody(raw) {
-  // Kramdown requires a blank line between paragraphs.
-  // Single newlines between text lines are joined by Kramdown into one line.
-  // So we ensure every non-empty line that isn't a block element is separated
-  // from the next by a blank line.
-  const lines = raw.split('\n');
-  const out   = [];
-  for (let i = 0; i < lines.length; i++) {
-    const line     = lines[i];
-    const nextLine = lines[i + 1];
-    out.push(line);
-    // If current line is non-empty and next line is non-empty,
-    // and neither is a list item / header / fence / blank — add blank line
-    if (
-      line.trim() !== '' &&
-      nextLine !== undefined &&
-      nextLine.trim() !== '' &&
-      !line.startsWith('#') &&
-      !line.startsWith('```') &&
-      !line.startsWith('- ') &&
-      !line.startsWith('> ') &&
-      !/^\d+\.\s/.test(line) &&
-      !nextLine.startsWith('#') &&
-      !nextLine.startsWith('```') &&
-      !nextLine.startsWith('- ') &&
-      !nextLine.startsWith('> ') &&
-      !/^\d+\.\s/.test(nextLine)
-    ) {
-      out.push('');
-    }
-  }
-  // Collapse 3+ consecutive blank lines to 2
-  return out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  // User writes with single newlines between paragraphs.
+  // Kramdown needs a blank line (double newline) to create a paragraph break.
+  // Simple rule: every single newline becomes a double newline.
+  // Already-doubled newlines stay as-is (collapse 3+ to 2 just in case).
+  return raw
+    .replace(/\r\n/g, '\n')          // normalise line endings
+    .replace(/\n{2,}/g, '\x00')       // protect existing blank lines
+    .replace(/\n/g, '\n\n')           // single newline → double
+    .replace(/\x00/g, '\n\n')        // restore protected blank lines
+    .replace(/\n{3,}/g, '\n\n')      // collapse any 3+ to 2
+    .trim();
 }
 
 function buildDocument() {
@@ -1218,6 +1197,17 @@ async function publish() {
   btn.disabled = true;
   btn.innerHTML = `<span class="spinner"></span>${isDraft ? 'Saving…' : 'Publishing…'}`;
 
+  // Fetch old file SHA BEFORE writing anything — must happen first
+  let oldFileSHA = null;
+  if (sourcePostPath && sourcePostPath !== postPath) {
+    try {
+      oldFileSHA = await ghGetSHA(sourcePostPath);
+      console.log('Old file SHA fetched:', sourcePostPath, oldFileSHA);
+    } catch(e) {
+      console.warn('Could not fetch old file SHA:', e);
+    }
+  }
+
   try {
     // Images
     for (const img of pastedImages) {
@@ -1236,22 +1226,20 @@ async function publish() {
 
     localStorage.removeItem(DRAFT_KEY);
 
-    // If we loaded an existing file and the new path differs, delete the old file
-    // Covers: draft→post, post renamed, draft renamed
+    // Delete old file now that new file is committed
     if (sourcePostPath && sourcePostPath !== postPath) {
       try {
         toast('Removing old file…', '');
-        const oldSHA = await ghGetSHA(sourcePostPath);
-        if (oldSHA) {
-          await ghDelete(sourcePostPath, oldSHA, `Replace ${sourcePostPath} with ${postPath}`);
+        if (oldFileSHA) {
+          await ghDelete(sourcePostPath, oldFileSHA, `Replace ${sourcePostPath} with ${postPath}`);
           console.log('Deleted old file:', sourcePostPath);
         } else {
-          console.warn('Old file not found on GitHub:', sourcePostPath);
+          console.warn('Skipping delete — no SHA for:', sourcePostPath);
+          toast(`Published ✓ — old file not found to delete`, '');
         }
       } catch(delErr) {
-        // Surface this clearly rather than swallowing it
-        console.error('Old file delete failed:', delErr);
-        toast(`Published ✓ but could not remove old file: ${sourcePostPath.split('/').pop()}`, 'err');
+        console.error('Old file delete failed:', delErr.message);
+        toast(`Published ✓ but old file needs manual delete: ${sourcePostPath.split('/').pop()}`, 'err');
       } finally {
         sourceDraftPath = null;
         sourcePostPath  = null;
