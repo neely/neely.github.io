@@ -60,19 +60,7 @@ body {
 }
 
 /* ── AUTOSAVE BAR ── */
-.save-bar {
-  position: fixed;
-  top: 0; left: 50%;
-  transform: translateX(-50%);
-  width: 100%; max-width: 480px;
-  height: 2px;
-  background: var(--accent);
-  opacity: 0;
-  z-index: 999;
-  pointer-events: none;
-}
-.save-bar.pulse { animation: savepulse 1s ease both; }
-@keyframes savepulse { 0%{opacity:0} 20%{opacity:1} 100%{opacity:0} }
+
 
 /* ── HEADER ── */
 .header {
@@ -412,8 +400,6 @@ body {
 </head>
 <body>
 
-<div class="save-bar" id="save-bar"></div>
-
 <header class="header">
   <div class="header-row">
     <div>
@@ -609,6 +595,7 @@ let tags            = [];
 let pastedImages    = []; // {name, base64, ghPath, mdRef, thumb, isGif}
 let handoffs        = []; // {name, content(text), ghPath, siteURL}
 let sourceDraftPath = null; // set when loading a draft; cleared on publish/reset
+let sourcePostPath  = null; // set when loading any existing post/draft path
 let saveTimer    = null;
 let postsOpen    = false;
 let postsLoaded  = false;
@@ -694,10 +681,7 @@ function saveNow() {
     draft:   document.getElementById('draft-toggle').checked,
   };
   localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
-  const bar = document.getElementById('save-bar');
-  bar.classList.remove('pulse');
-  void bar.offsetWidth;
-  bar.classList.add('pulse');
+  flashSaved();
 }
 function restoreDraft() {
   const d = safeGet(DRAFT_KEY);
@@ -710,7 +694,16 @@ function restoreDraft() {
   document.getElementById('draft-toggle').checked = !!d.draft;
   tags = d.tags || [];
   renderTags(); onDraftToggle(); updateURLPreview(); updateWC();
-  dismissRestore(); toast('Draft restored', 'ok');
+  dismissRestore();
+  // Images and handoff docs can't survive a page reload (binary data).
+  // Their Markdown references are restored in the body — re-attach files before publishing.
+  const hasImgRefs     = (d.body || '').includes('![](');
+  const hasHandoffRefs = false; // handoffs aren't saved to localStorage
+  if (hasImgRefs) {
+    toast('Draft restored — re-attach any images before publishing', '');
+  } else {
+    toast('Draft restored', 'ok');
+  }
 }
 function dismissRestore() {
   document.getElementById('restore-banner').classList.remove('show');
@@ -875,6 +868,14 @@ function updateWC() {
   document.getElementById('wc-line').textContent = `${w} words · ${b.length} chars`;
 }
 
+function flashSaved() {
+  const el = document.getElementById('wc-line');
+  const b  = document.getElementById('md-area').value;
+  const w  = b.trim() ? b.trim().split(/\s+/).length : 0;
+  el.textContent = `${w} words · ${b.length} chars · saved`;
+  setTimeout(() => { el.textContent = `${w} words · ${b.length} chars`; }, 1800);
+}
+
 // ── LOAD EXISTING POSTS ───────────────────────────────────────────────────
 async function togglePostsList() {
   postsOpen = !postsOpen;
@@ -941,16 +942,20 @@ async function loadPost(filename, path, kind) {
       const tagsRaw = get('tags');
       tags = tagsRaw ? tagsRaw.replace(/[\[\]]/g,'').split(',').map(t=>t.trim()).filter(Boolean) : [];
       renderTags();
-      const dm = filename.match(/^(\d{4}-\d{2}-\d{2})/);
-      if (dm) document.getElementById('f-date').value = dm[1];
+      // Use front matter date first, fall back to filename date
+      const fmDate = get('date');
+      const dm     = filename.match(/^(\d{4}-\d{2}-\d{2})/);
+      const dateVal = fmDate ? fmDate.slice(0,10) : (dm ? dm[1] : todayISO());
+      document.getElementById('f-date').value = dateVal;
       document.getElementById('md-area').value = body;
     } else {
       document.getElementById('md-area').value = raw;
     }
 
-    // If loading a draft, flip the toggle on and remember where it came from
+    // Record source path so we can delete/replace on publish if title/date changed
+    sourcePostPath  = path; // always track where it came from
     if (kind === 'draft') {
-      sourceDraftPath = path; // e.g. _drafts/2026-06-13-My-Title.md
+      sourceDraftPath = path;
       document.getElementById('draft-toggle').checked = true;
     } else {
       sourceDraftPath = null;
@@ -959,7 +964,7 @@ async function loadPost(filename, path, kind) {
     onDraftToggle();
 
     updateURLPreview(); updateWC(); togglePostsList();
-    toast(kind === 'draft' ? 'Draft loaded' : 'Post loaded', 'ok');
+    toast(kind === 'draft' ? 'Draft loaded — toggle off to publish' : 'Post loaded', 'ok');
     setTab('write');
   } catch(e) { toast(`Error: ${e.message}`, 'err'); }
 }
@@ -1191,20 +1196,24 @@ async function publish() {
 
     localStorage.removeItem(DRAFT_KEY);
 
-    // If we loaded a draft and are now publishing to _posts, delete the draft
-    if (!isDraft && sourceDraftPath) {
+    // If we loaded an existing file and the new path differs, delete the old file
+    // Covers: draft→post, post renamed, draft renamed
+    if (sourcePostPath && sourcePostPath !== postPath) {
       try {
-        toast('Cleaning up draft…', '');
-        const draftSHA = await ghGetSHA(sourceDraftPath);
-        if (draftSHA) {
-          await ghDelete(sourceDraftPath, draftSHA, `Remove draft after publishing: ${title}`);
+        toast('Cleaning up old file…', '');
+        const oldSHA = await ghGetSHA(sourcePostPath);
+        if (oldSHA) {
+          await ghDelete(sourcePostPath, oldSHA, `Replace ${sourcePostPath} with ${postPath}`);
         }
         sourceDraftPath = null;
+        sourcePostPath  = null;
       } catch(delErr) {
-        // Non-fatal — post is live, draft cleanup just failed
-        console.warn('Draft delete failed:', delErr);
-        toast('Published ✓ (draft cleanup failed — delete manually)', 'ok');
+        console.warn('Old file delete failed:', delErr);
+        // Non-fatal — new file is already committed
       }
+    } else {
+      sourceDraftPath = null;
+      sourcePostPath  = null;
     }
 
     showSuccess(postPath, fileSlug, isDraft);
@@ -1218,7 +1227,12 @@ async function publish() {
 }
 
 function showSuccess(postPath, fileSlug, isDraft) {
-  document.getElementById('pub-btn').style.display = 'none';
+  // Show success block but keep publish button visible and re-enabled
+  const btn = document.getElementById('pub-btn');
+  btn.disabled = false;
+  btn.textContent = isDraft ? 'Save draft' : 'Publish post';
+  btn.classList.toggle('draft-mode', isDraft);
+
   document.getElementById('success-block').classList.add('show');
   document.getElementById('success-path').textContent = postPath;
   const titleSlug = getTitleSlug();
@@ -1234,12 +1248,12 @@ function resetForm() {
   document.getElementById('f-date').value   = todayISO();
   document.getElementById('f-layout').value = 'post';
   document.getElementById('draft-toggle').checked = false;
-  tags = []; pastedImages = []; handoffs = []; sourceDraftPath = null; postsLoaded = false;
+  tags = []; pastedImages = []; handoffs = []; sourceDraftPath = null; sourcePostPath = null; postsLoaded = false;
   renderTags(); renderImgList(); renderHandoffList();
   onDraftToggle(); updateURLPreview(); updateWC();
   document.getElementById('success-block').classList.remove('show');
   const btn = document.getElementById('pub-btn');
-  btn.style.display = ''; btn.disabled = false;
+  btn.disabled = false;
   btn.textContent = 'Publish post'; btn.classList.remove('draft-mode');
   setTab('write'); window.scrollTo(0,0);
 }
@@ -1257,9 +1271,18 @@ function toast(msg, type='') {
 
 // ── SIMPLE MARKDOWN RENDERER ──────────────────────────────────────────────
 function simpleMarkdown(md) {
+  // Normalise line endings
+  md = md.replace(/\r\n/g,'\n');
+
+  // Protect fenced code blocks from further processing
+  const blocks = [];
+  md = md.replace(/```[\w]*\n[\s\S]*?```/gm, m => {
+    blocks.push(m);
+    return `\x00BLOCK${blocks.length-1}\x00`;
+  });
+
   let h = md
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/```[\w]*\n([\s\S]*?)```/gm,(_,c)=>`<pre><code>${c.trim()}</code></pre>`)
     .replace(/`([^`]+)`/g,'<code>$1</code>')
     .replace(/^### (.+)$/gm,'<h3>$1</h3>')
     .replace(/^## (.+)$/gm,'<h2>$1</h2>')
@@ -1272,11 +1295,21 @@ function simpleMarkdown(md) {
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2">$1</a>')
     .replace(/^- (.+)$/gm,'<li>$1</li>')
     .replace(/^\d+\. (.+)$/gm,'<li>$1</li>');
-  return h.split(/\n\n+/).map(block => {
+
+  // Restore code blocks (decode html entities inside them)
+  h = h.replace(/\x00BLOCK(\d+)\x00/g, (_, i) => {
+    const raw = blocks[parseInt(i)];
+    const code = raw.replace(/```[\w]*\n/,'').replace(/\n```$/,'');
+    return `<pre><code>${code.trim().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>`;
+  });
+
+  // Split on blank lines into blocks
+  return h.split(/\n{2,}/).map(block => {
     block = block.trim();
     if (!block) return '';
     if (/^<(h[1-6]|pre|blockquote|hr)/.test(block)) return block;
     if (block.startsWith('<li>')) return `<ul>${block}</ul>`;
+    // Single newlines within a paragraph become <br> — matching Kramdown GFM behaviour
     return `<p>${block.replace(/\n/g,'<br>')}</p>`;
   }).join('\n');
 }
