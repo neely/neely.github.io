@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Compose — Notes from the Edge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+
+/* ── LIGHT: warm parchment (Reverie-aligned) ── */
+:root {
+  --bg:        #faf9f6;
+  --bg-off:    #f2f0eb;
+  --surface:   #ffffff;
+  --border:    #e4e0d8;
+  --ink:       #1a1a1a;
+  --ink-mid:   #3d3d3d;
+  --ink-soft:  #888078;
+  --accent:    #c17b3e;
+  --accent-hi: #d4934f;
+  --accent-lo: #f5ede2;
+  --header-bg: #1a1a1a;
+  --green:     #2d6a4f;
+  --green-lo:  #d8f3dc;
+  --red:       #9b2335;
+  --shadow:    rgba(26,26,26,0.07);
+}
+
+/* ── DARK: Claude navy ── */
+[data-theme="dark"] {
+  --bg:        #1a1b2e;
+  --bg-off:    #141524;
+  --surface:   #22243a;
+  --border:    #2e3050;
+  --ink:       #e8e6df;
+  --ink-mid:   #b8b5ac;
+  --ink-soft:  #7a7890;
+  --accent:    #c17b3e;
+  --accent-hi: #d4934f;
+  --accent-lo: #2e2318;
+  --header-bg: #14152a;
+  --green:     #4caf80;
+  --green-lo:  #1a2e22;
+  --red:       #e05555;
+  --shadow:    rgba(0,0,0,0.3);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'JetBrains Mono', monospace;
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding-bottom: 160px;
+  transition: background 0.25s, color 0.25s;
+}
+
+/* ── AUTOSAVE BAR ── */
+.save-bar {
+  position: fixed;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%; max-width: 480px;
+  height: 2px;
+  background: var(--accent);
+  opacity: 0;
+  z-index: 999;
+  pointer-events: none;
+}
+.save-bar.pulse { animation: savepulse 1s ease both; }
+@keyframes savepulse { 0%{opacity:0} 20%{opacity:1} 100%{opacity:0} }
+
+/* ── HEADER ── */
+.header {
+  background: var(--header-bg);
+  padding: 16px 18px 0;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+[data-theme="dark"] .header { border-bottom: 1px solid var(--border); }
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+}
+
+.wordmark {
+  font-family: 'Lora', serif;
+  font-size: 17px;
+  color: #faf9f6;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+[data-theme="dark"] .wordmark { color: var(--ink); }
+.wordmark em { color: var(--accent); font-style: normal; }
+.wordmark-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #888078;
+  margin-top: 2px;
+}
+
+.header-actions { display: flex; align-items: center; gap: 7px; }
+
+.hbtn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 7px;
+  color: rgba(255,255,255,0.6);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  padding: 6px 10px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+[data-theme="dark"] .hbtn { border-color: var(--border); color: var(--ink-soft); }
+.hbtn.has-token { border-color: var(--green); color: var(--green); }
+.hbtn.theme { font-size: 15px; padding: 4px 9px; }
+
+.header-rule { height: 2px; background: var(--accent); margin: 0 -18px; opacity: 0.75; }
+
+/* ── TABS ── */
+.mode-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background: var(--bg-off);
+  border-bottom: 1px solid var(--border);
+}
+.mode-btn {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--ink-soft);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 10px 4px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.mode-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ── RESTORE BANNER ── */
+.restore-banner {
+  display: none;
+  margin: 12px 14px 0;
+  background: var(--accent-lo);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: 10px 13px;
+  font-size: 11px;
+  color: var(--ink-mid);
+  align-items: center;
+  gap: 8px;
+}
+.restore-banner.show { display: flex; }
+.restore-title { flex: 1; color: var(--accent); font-size: 11px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rbtn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  padding: 5px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+.rdismiss { background:none; border:none; color:var(--ink-soft); font-size:16px; cursor:pointer; padding:0 2px; -webkit-tap-highlight-color:transparent; flex-shrink:0; }
+
+/* ── SECTIONS ── */
+.section {
+  margin: 14px 14px 0;
+  background: var(--surface);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 10px var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.section-head {
+  padding: 10px 15px;
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sh-action {
+  margin-left: auto;
+  font-size: 9px;
+  color: var(--accent);
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+
+/* ── FIELDS ── */
+.field { border-bottom: 1px solid var(--border); }
+.field:last-child { border-bottom: none; }
+.field label {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 9px 15px 0;
+}
+.field input, .field textarea {
+  display: block; width: 100%; border: none; outline: none;
+  background: transparent;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px; color: var(--ink);
+  padding: 4px 15px 11px;
+  -webkit-appearance: none; resize: none;
+  transition: background 0.15s;
+}
+.field input::placeholder, .field textarea::placeholder { color: var(--ink-soft); opacity: 0.45; }
+.field input:focus, .field textarea:focus { background: var(--accent-lo); }
+
+.field-grid { display: grid; grid-template-columns: 1fr 1fr; }
+.field-grid .field { border-bottom: none; }
+.field-grid .field:first-child { border-right: 1px solid var(--border); }
+
+/* ── URL PREVIEW ── */
+.url-preview {
+  padding: 5px 15px 10px;
+  font-size: 10px;
+  color: var(--ink-soft);
+  min-height: 42px;
+  line-height: 1.8;
+}
+.url-preview code { color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+.url-label { font-size: 8px; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.7; margin-right: 4px; }
+
+/* ── TAGS ── */
+.tags-wrap {
+  padding: 8px 15px 11px;
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-height: 44px;
+}
+.tag-pill {
+  display: flex; align-items: center; gap: 5px;
+  background: var(--accent-lo); color: var(--accent);
+  border-radius: 20px; padding: 4px 10px 4px 11px; font-size: 11px;
+  animation: pop 0.15s ease both;
+}
+@keyframes pop { from{opacity:0;transform:scale(0.8)} to{opacity:1;transform:scale(1)} }
+.tag-pill button { background:none; border:none; color:var(--accent); font-size:14px; line-height:1; cursor:pointer; padding:0; opacity:0.6; -webkit-tap-highlight-color:transparent; }
+.tag-input { border:none; outline:none; background:transparent; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink); min-width:80px; flex:1; }
+.tag-input::placeholder { color:var(--ink-soft); opacity:0.45; }
+
+/* ── LOAD POSTS SHEET ── */
+.posts-sheet { display:none; border-top:1px solid var(--border); max-height:260px; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+.posts-sheet.open { display:block; }
+.posts-msg { padding:14px 15px; font-size:11px; color:var(--ink-soft); text-align:center; }
+.post-item { display:flex; align-items:center; padding:11px 15px; border-bottom:1px solid var(--border); cursor:pointer; gap:10px; -webkit-tap-highlight-color:transparent; transition:background 0.1s; }
+.post-item:last-child { border-bottom:none; }
+.post-item:active { background:var(--accent-lo); }
+.pi-date { font-size:9px; color:var(--ink-soft); white-space:nowrap; letter-spacing:0.05em; flex-shrink:0; }
+.pi-name { font-size:12px; color:var(--ink); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pi-arr { font-size:9px; color:var(--ink-soft); flex-shrink:0; }
+.pi-pill { font-size:8px; letter-spacing:0.12em; text-transform:uppercase; padding:2px 6px; border-radius:10px; flex-shrink:0; }
+.pi-pill.draft { background:var(--accent-lo); color:var(--accent); }
+.pi-pill.post  { background:var(--green-lo);  color:var(--green);  }
+
+/* ── MARKDOWN EDITOR ── */
+.md-toolbar {
+  display: flex; flex-wrap: wrap; gap: 2px;
+  padding: 7px 10px; border-bottom: 1px solid var(--border);
+  background: var(--bg-off);
+}
+.md-btn {
+  background: none; border: 1px solid transparent; border-radius: 5px;
+  color: var(--ink-soft); font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 500; padding: 5px 8px;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: background 0.1s, color 0.1s; white-space: nowrap;
+}
+.md-btn:active { background:var(--accent-lo); color:var(--accent); border-color:var(--accent); }
+
+/* inline link row */
+.link-row { display:none; width:100%; padding:6px 10px 7px; gap:6px; align-items:center; border-top:1px solid var(--border); background:var(--accent-lo); }
+.link-row.open { display:flex; }
+.link-input { flex:1; border:1px solid var(--accent); border-radius:6px; background:var(--surface); color:var(--ink); font-family:'JetBrains Mono',monospace; font-size:12px; padding:6px 10px; outline:none; }
+.link-ok { background:var(--accent); color:#fff; border:none; border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:10px; padding:7px 12px; cursor:pointer; -webkit-tap-highlight-color:transparent; white-space:nowrap; }
+.link-x { background:none; border:none; color:var(--ink-soft); font-size:16px; cursor:pointer; padding:0 4px; -webkit-tap-highlight-color:transparent; }
+
+.md-area {
+  display:block; width:100%; border:none; outline:none; background:transparent;
+  font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.75; color:var(--ink);
+  padding:13px 15px; resize:none; min-height:240px; -webkit-appearance:none;
+  transition:background 0.15s;
+}
+.md-area:focus { background:rgba(193,123,62,0.03); }
+
+.wc-line { padding:5px 15px 8px; font-size:9px; color:var(--ink-soft); letter-spacing:0.1em; border-top:1px solid var(--border); }
+
+/* ── PREVIEW ── */
+.preview-pane { padding:16px; font-family:'Lora',serif; font-size:15px; line-height:1.85; color:var(--ink); min-height:240px; display:none; }
+.preview-pane.active { display:block; }
+.preview-pane h1,.preview-pane h2,.preview-pane h3 { font-family:'Lora',serif; margin:1.2em 0 0.4em; }
+.preview-pane h1{font-size:22px} .preview-pane h2{font-size:18px} .preview-pane h3{font-size:15px}
+.preview-pane p { margin:0.7em 0; }
+.preview-pane code { font-family:'JetBrains Mono',monospace; font-size:12px; background:var(--accent-lo); color:var(--accent); padding:1px 5px; border-radius:3px; }
+.preview-pane pre { background:var(--bg-off); padding:12px 14px; border-radius:8px; overflow-x:auto; margin:1em 0; font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.6; border:1px solid var(--border); }
+.preview-pane pre code { background:none; color:inherit; padding:0; }
+.preview-pane a { color:var(--accent); }
+.preview-pane img { max-width:100%; border-radius:6px; margin:0.5em 0; }
+.preview-pane blockquote { border-left:3px solid var(--accent); margin:1em 0; padding:4px 14px; color:var(--ink-soft); font-style:italic; }
+.preview-pane ul,.preview-pane ol { padding-left:1.4em; margin:0.7em 0; }
+.preview-pane li { margin:0.3em 0; }
+.preview-pane hr { border:none; border-top:1px solid var(--border); margin:1.5em 0; }
+
+/* ── RAW ── */
+.raw-pane { display:none; padding:15px; font-family:'JetBrains Mono',monospace; font-size:11px; line-height:1.7; color:var(--ink-soft); white-space:pre-wrap; word-break:break-word; background:var(--bg-off); border-top:1px solid var(--border); min-height:120px; }
+.raw-pane.active { display:block; }
+
+/* ── IMAGES ── */
+.img-list { padding:8px 15px 12px; display:flex; flex-direction:column; gap:6px; }
+.img-item { display:flex; align-items:center; gap:10px; background:var(--bg-off); border-radius:6px; padding:7px 10px; font-size:11px; animation:slideup 0.2s ease both; border:1px solid var(--border); }
+@keyframes slideup { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+.img-thumb { width:36px; height:36px; object-fit:cover; border-radius:4px; flex-shrink:0; background:var(--border); }
+.img-info { flex:1; min-width:0; }
+.img-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--ink); }
+.img-path { font-size:9px; color:var(--green); margin-top:2px; }
+.img-del { background:none; border:none; color:var(--ink-soft); font-size:16px; cursor:pointer; padding:2px 4px; -webkit-tap-highlight-color:transparent; flex-shrink:0; }
+.paste-hint { padding:9px 15px; font-size:10px; color:var(--ink-soft); letter-spacing:0.06em; border-top:1px solid var(--border); display:flex; align-items:center; gap:8px; }
+.paste-hint kbd { background:var(--bg-off); border:1px solid var(--border); border-radius:4px; padding:2px 6px; font-family:'JetBrains Mono',monospace; font-size:10px; }
+
+/* ── HANDOFF ATTACH ── */
+.handoff-file-input { display:none; }
+
+/* ── DRAFT TOGGLE ── */
+.draft-row { display:flex; align-items:center; justify-content:space-between; padding:12px 15px; }
+.draft-label { font-size:12px; color:var(--ink); }
+.draft-sub { font-size:10px; color:var(--ink-soft); margin-top:2px; }
+.toggle { position:relative; display:inline-block; width:44px; height:24px; }
+.toggle input { opacity:0; width:0; height:0; }
+.toggle-track { position:absolute; inset:0; background:var(--border); border-radius:24px; cursor:pointer; transition:background 0.2s; }
+.toggle input:checked + .toggle-track { background:var(--accent); }
+.toggle-track::after { content:''; position:absolute; width:18px; height:18px; left:3px; top:3px; background:#fff; border-radius:50%; transition:transform 0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.2); }
+.toggle input:checked + .toggle-track::after { transform:translateX(20px); }
+
+/* ── ACTIONS ── */
+.action-bar { margin:14px 14px 0; }
+.publish-btn {
+  width:100%; padding:15px;
+  background:var(--accent); color:#fff; border:none; border-radius:12px;
+  font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.2em; text-transform:uppercase;
+  cursor:pointer; box-shadow:0 4px 18px rgba(193,123,62,0.35);
+  transition:transform 0.12s, box-shadow 0.12s;
+  -webkit-tap-highlight-color:transparent;
+}
+.publish-btn:active { transform:scale(0.97); box-shadow:0 2px 8px rgba(193,123,62,0.2); }
+.publish-btn:disabled { background:var(--ink-soft); box-shadow:none; cursor:not-allowed; transform:none; }
+.publish-btn.draft-mode { background:var(--ink-mid); box-shadow:0 4px 18px var(--shadow); }
+.spinner { display:inline-block; width:11px; height:11px; border:2px solid rgba(255,255,255,0.35); border-top-color:#fff; border-radius:50%; animation:spin 0.6s linear infinite; vertical-align:middle; margin-right:7px; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* ── SUCCESS ── */
+.success-block { display:none; margin:14px 14px 0; background:var(--green-lo); border-radius:12px; padding:18px; border:1px solid rgba(45,106,79,0.25); }
+.success-block.show { display:block; }
+.success-title { font-family:'Lora',serif; font-size:17px; color:var(--green); margin-bottom:5px; }
+.success-path { font-size:10px; color:var(--green); font-family:'JetBrains Mono',monospace; margin-bottom:4px; word-break:break-all; }
+.success-url { font-size:11px; color:var(--green); margin-bottom:13px; }
+.success-actions { display:flex; gap:8px; flex-wrap:wrap; }
+.slink { display:inline-block; padding:8px 13px; border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none; cursor:pointer; border:none; -webkit-tap-highlight-color:transparent; }
+.slink.primary { background:var(--green); color:#fff; }
+.slink.secondary { background:transparent; border:1px solid var(--green); color:var(--green); }
+
+/* ── TOAST ── */
+.toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(16px); background:var(--ink); color:var(--bg); font-size:11px; letter-spacing:0.08em; padding:10px 18px; border-radius:40px; white-space:nowrap; opacity:0; transition:opacity 0.2s,transform 0.2s; pointer-events:none; z-index:999; max-width:calc(100vw - 40px); text-align:center; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.toast.ok { background:var(--green); color:#fff; }
+.toast.err { background:var(--red); color:#fff; }
+
+/* ── PAT MODAL ── */
+.modal-bg { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:500; display:flex; align-items:flex-end; opacity:0; transition:opacity 0.25s; pointer-events:none; }
+.modal-bg.open { opacity:1; pointer-events:all; }
+.modal-sheet { background:var(--surface); border-radius:18px 18px 0 0; padding:22px 20px 48px; width:100%; max-width:480px; margin:0 auto; transform:translateY(100%); transition:transform 0.3s cubic-bezier(0.32,0.72,0,1); border-top:1px solid var(--border); }
+.modal-bg.open .modal-sheet { transform:translateY(0); }
+.modal-handle { width:36px; height:4px; background:var(--border); border-radius:2px; margin:0 auto 18px; }
+.modal-title { font-family:'Lora',serif; font-size:19px; color:var(--ink); margin-bottom:6px; }
+.modal-desc { font-size:11px; color:var(--ink-soft); line-height:1.75; margin-bottom:16px; }
+.modal-desc a { color:var(--accent); }
+.modal-desc code { font-family:'JetBrains Mono',monospace; background:var(--bg-off); padding:1px 5px; border-radius:3px; }
+.modal-input { width:100%; border:1.5px solid var(--border); border-radius:8px; padding:11px 13px; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink); background:var(--bg-off); outline:none; }
+.modal-input:focus { border-color:var(--accent); }
+.modal-save { margin-top:11px; width:100%; padding:13px; background:var(--accent); color:#fff; border:none; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+</style>
+</head>
+<body>
+
+<div class="save-bar" id="save-bar"></div>
+
+<header class="header">
+  <div class="header-row">
+    <div>
+      <div class="wordmark">notes<em>.</em>compose</div>
+      <div class="wordmark-sub">neely.github.io</div>
+    </div>
+    <div class="header-actions">
+      <button class="hbtn theme" id="theme-btn" onclick="toggleTheme()">☀</button>
+      <button class="hbtn" id="pat-btn" onclick="openPAT()">⚿ token</button>
+    </div>
+  </div>
+  <div class="header-rule"></div>
+</header>
+
+<div class="mode-bar">
+  <button class="mode-btn active" id="tab-write" onclick="setTab('write')">✏ Write</button>
+  <button class="mode-btn" id="tab-preview" onclick="setTab('preview')">◈ Preview</button>
+  <button class="mode-btn" id="tab-raw" onclick="setTab('raw')">{ } Raw</button>
+</div>
+
+<div class="restore-banner" id="restore-banner">
+  <span class="restore-title" id="restore-title">Unsaved draft found</span>
+  <button class="rbtn" onclick="restoreDraft()">Restore</button>
+  <button class="rdismiss" onclick="dismissRestore()">✕</button>
+</div>
+
+<!-- FRONT MATTER -->
+<div class="section">
+  <div class="section-head">
+    Front matter
+    <span class="sh-action" id="load-toggle" onclick="togglePostsList()">Load post ▾</span>
+  </div>
+
+  <div class="posts-sheet" id="posts-sheet">
+    <div class="posts-msg" id="posts-msg">Loading _posts…</div>
+  </div>
+
+  <div class="field">
+    <label for="f-title">Title</label>
+    <input id="f-title" type="text" placeholder="As it appears on site"
+      autocorrect="on" autocapitalize="sentences" oninput="onMetaChange()">
+  </div>
+
+  <div class="field-grid">
+    <div class="field">
+      <label for="f-date">Date</label>
+      <input id="f-date" type="date" onchange="onMetaChange()">
+    </div>
+    <div class="field">
+      <label for="f-layout">Layout</label>
+      <input id="f-layout" type="text" value="post" placeholder="post" oninput="onMetaChange()">
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="f-excerpt">Excerpt <span style="opacity:.5;font-size:7px">(homepage preview)</span></label>
+    <input id="f-excerpt" type="text" placeholder="One sentence shown on the homepage…"
+      autocorrect="on" autocapitalize="sentences" oninput="scheduleSave()">
+  </div>
+
+  <div class="field" style="border-bottom:none">
+    <label>Tags</label>
+    <div class="tags-wrap" id="tags-wrap">
+      <input class="tag-input" id="tag-input" type="text"
+        placeholder="type a tag, press Enter"
+        autocapitalize="none" autocorrect="off" autocomplete="off">
+    </div>
+  </div>
+
+  <div class="url-preview" id="url-preview"></div>
+</div>
+
+<!-- BODY -->
+<div class="section">
+  <div class="section-head">Body</div>
+  <div class="md-toolbar" id="md-toolbar">
+    <button class="md-btn" onclick="wrap('**','**')"><b>B</b></button>
+    <button class="md-btn" onclick="wrap('_','_')"><i>I</i></button>
+    <button class="md-btn" onclick="wrap('`','`')">` `</button>
+    <button class="md-btn" onclick="wrapBlock('```\n','\n```')">{ }</button>
+    <button class="md-btn" onclick="insertLine('## ')">H2</button>
+    <button class="md-btn" onclick="insertLine('### ')">H3</button>
+    <button class="md-btn" onclick="toggleLinkRow()">🔗</button>
+    <button class="md-btn" onclick="insertLine('> ')">❝</button>
+    <button class="md-btn" onclick="insertLine('- ')">—</button>
+    <button class="md-btn" onclick="insertLine('---\n')">──</button>
+    <div class="link-row" id="link-row">
+      <input class="link-input" id="link-input" type="url"
+        placeholder="https://" autocorrect="off" autocapitalize="none">
+      <button class="link-ok" onclick="insertLink()">Insert</button>
+      <button class="link-x" onclick="closeLinkRow()">✕</button>
+    </div>
+  </div>
+  <textarea class="md-area" id="md-area"
+    placeholder="Write your post in Markdown…&#10;&#10;Paste a screenshot (⌘V) to embed an image."
+    oninput="onBodyInput()" onpaste="handlePaste(event)"></textarea>
+  <div class="preview-pane" id="preview-pane"></div>
+  <div class="raw-pane" id="raw-pane"></div>
+  <div class="wc-line" id="wc-line">0 words · 0 chars</div>
+</div>
+
+<!-- IMAGES -->
+<div class="section">
+  <div class="section-head">
+    Images
+    <span class="sh-action" onclick="document.getElementById('gif-input').click()">+ gif</span>
+  </div>
+  <input type="file" id="gif-input" accept=".gif" style="display:none" onchange="handleGifFile(event)">
+  <div class="img-list" id="img-list"></div>
+  <div class="paste-hint">
+    <kbd>⌘V</kbd> / <kbd>Ctrl+V</kbd> in the body to paste a screenshot · tap <strong>+ gif</strong> for animated gifs
+  </div>
+</div>
+
+<!-- HANDOFF -->
+<div class="section">
+  <div class="section-head">
+    Handoff docs
+    <span class="sh-action" onclick="document.getElementById('handoff-file-input').click()">+ attach</span>
+  </div>
+  <input class="handoff-file-input" id="handoff-file-input"
+    type="file" accept=".md,.txt" onchange="handleHandoffFile(event)">
+  <div class="img-list" id="handoff-list"></div>
+  <div class="paste-hint" id="handoff-hint">
+    Attach <strong>.md</strong> files to commit to <code>/shared/</code> and link from your post
+  </div>
+</div>
+
+<!-- OPTIONS -->
+<div class="section">
+  <div class="section-head">Options</div>
+  <div class="draft-row">
+    <div>
+      <div class="draft-label">Save as draft</div>
+      <div class="draft-sub" id="draft-sub">Commits to _posts/ (live)</div>
+    </div>
+    <label class="toggle">
+      <input type="checkbox" id="draft-toggle" onchange="onDraftToggle()">
+      <div class="toggle-track"></div>
+    </label>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-block" id="success-block">
+  <div class="success-title">Published ✓</div>
+  <div class="success-path" id="success-path"></div>
+  <div class="success-url" id="success-url"></div>
+  <div class="success-actions">
+    <a class="slink primary" id="success-gh" href="#" target="_blank">View on GitHub</a>
+    <button class="slink secondary" onclick="resetForm()">New post</button>
+  </div>
+</div>
+
+<div class="action-bar">
+  <button class="publish-btn" id="pub-btn" onclick="publish()">Publish post</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- PAT MODAL -->
+<div class="modal-bg" id="pat-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">GitHub token</div>
+    <div class="modal-desc">
+      Fine-grained PAT with <strong>Contents: read &amp; write</strong>
+      scoped to <code>neely/neely.github.io</code>.<br><br>
+      <a href="https://github.com/settings/tokens?type=beta" target="_blank">
+        github.com/settings/tokens → Fine-grained → neely.github.io → Contents (read/write)
+      </a><br><br>
+      Stored in <code>localStorage</code> on this device only.
+    </div>
+    <input class="modal-input" id="pat-input" type="password"
+      placeholder="github_pat_…" autocomplete="off">
+    <button class="modal-save" onclick="savePAT()">Save token</button>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────
+const GH_USER    = 'neely';
+const GH_REPO    = 'neely.github.io';
+const GH_BRANCH  = 'master';
+const SITE_URL   = 'https://neely.github.io';
+const API_BASE   = `https://api.github.com/repos/${GH_USER}/${GH_REPO}`;
+const IMG_ROOT   = 'images';
+const SHARED_DIR = 'shared';
+const DRAFT_KEY  = 'compose_draft_v2';
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let tags            = [];
+let pastedImages    = []; // {name, base64, ghPath, mdRef, thumb, isGif}
+let handoffs        = []; // {name, content(text), ghPath, siteURL}
+let sourceDraftPath = null; // set when loading a draft; cleared on publish/reset
+let saveTimer    = null;
+let postsOpen    = false;
+let postsLoaded  = false;
+let currentTab   = 'write';
+let linkSelS     = 0, linkSelE = 0;
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+(function init() {
+  const saved = localStorage.getItem('compose_theme');
+  const dark  = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  setTheme(saved || (dark ? 'dark' : 'light'));
+
+  document.getElementById('f-date').value = todayISO();
+  updateURLPreview();
+  updatePATBtn();
+  updateWC();
+
+  const draft = safeGet(DRAFT_KEY);
+  if (draft && (draft.title || draft.body)) {
+    document.getElementById('restore-title').textContent =
+      draft.title ? `Draft: "${draft.title}"` : 'Unsaved draft';
+    document.getElementById('restore-banner').classList.add('show');
+  }
+})();
+
+function todayISO() {
+  return new Date().toISOString().split('T')[0];
+}
+function safeGet(key) {
+  try { return JSON.parse(localStorage.getItem(key)); } catch(e) { return null; }
+}
+
+// ── THEME ─────────────────────────────────────────────────────────────────
+function setTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  document.getElementById('theme-btn').textContent = t === 'dark' ? '☾' : '☀';
+  localStorage.setItem('compose_theme', t);
+}
+function toggleTheme() {
+  setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+}
+
+// ── PAT ───────────────────────────────────────────────────────────────────
+function getPAT() { return localStorage.getItem('gh_compose_pat') || ''; }
+function openPAT() {
+  document.getElementById('pat-input').value = getPAT();
+  document.getElementById('pat-modal').classList.add('open');
+  setTimeout(() => document.getElementById('pat-input').focus(), 320);
+}
+function closePAT() { document.getElementById('pat-modal').classList.remove('open'); }
+function savePAT() {
+  const v = document.getElementById('pat-input').value.trim();
+  if (!v) return;
+  localStorage.setItem('gh_compose_pat', v);
+  closePAT(); updatePATBtn(); toast('Token saved', 'ok');
+}
+function updatePATBtn() {
+  const has = !!getPAT();
+  const btn = document.getElementById('pat-btn');
+  btn.classList.toggle('has-token', has);
+  btn.textContent = has ? '✓ token' : '⚿ token';
+}
+document.getElementById('pat-modal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closePAT();
+});
+document.getElementById('pat-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') savePAT();
+});
+
+// ── AUTOSAVE ──────────────────────────────────────────────────────────────
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveNow, 1800);
+}
+function saveNow() {
+  const d = {
+    title:   document.getElementById('f-title').value,
+    date:    document.getElementById('f-date').value,
+    layout:  document.getElementById('f-layout').value,
+    excerpt: document.getElementById('f-excerpt').value,
+    tags:    [...tags],
+    body:    document.getElementById('md-area').value,
+    draft:   document.getElementById('draft-toggle').checked,
+  };
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+  const bar = document.getElementById('save-bar');
+  bar.classList.remove('pulse');
+  void bar.offsetWidth;
+  bar.classList.add('pulse');
+}
+function restoreDraft() {
+  const d = safeGet(DRAFT_KEY);
+  if (!d) return;
+  document.getElementById('f-title').value   = d.title   || '';
+  document.getElementById('f-date').value    = d.date    || todayISO();
+  document.getElementById('f-layout').value  = d.layout  || 'post';
+  document.getElementById('f-excerpt').value = d.excerpt || '';
+  document.getElementById('md-area').value   = d.body    || '';
+  document.getElementById('draft-toggle').checked = !!d.draft;
+  tags = d.tags || [];
+  renderTags(); onDraftToggle(); updateURLPreview(); updateWC();
+  dismissRestore(); toast('Draft restored', 'ok');
+}
+function dismissRestore() {
+  document.getElementById('restore-banner').classList.remove('show');
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────
+function setTab(tab) {
+  currentTab = tab;
+  ['write','preview','raw'].forEach(t => {
+    document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
+  });
+  const ta      = document.getElementById('md-area');
+  const toolbar = document.getElementById('md-toolbar');
+  const preview = document.getElementById('preview-pane');
+  const raw     = document.getElementById('raw-pane');
+  ta.style.display      = tab === 'write' ? '' : 'none';
+  toolbar.style.display = tab === 'write' ? '' : 'none';
+  preview.classList.toggle('active', tab === 'preview');
+  raw.classList.toggle('active', tab === 'raw');
+  if (tab === 'preview') renderPreview();
+  if (tab === 'raw')     raw.textContent = buildDocument();
+}
+
+function renderPreview() {
+  document.getElementById('preview-pane').innerHTML =
+    simpleMarkdown(document.getElementById('md-area').value);
+}
+
+// ── SLUG + URL PREVIEW ────────────────────────────────────────────────────
+function getFileSlug() {
+  // Preserve title case, just replace spaces with hyphens — matches existing posts
+  const title = document.getElementById('f-title').value.trim();
+  const date  = document.getElementById('f-date').value;
+  if (!title || !date) return '';
+  const slug = title.replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-');
+  return `${date}-${slug}`;
+}
+
+function getTitleSlug() {
+  const title = document.getElementById('f-title').value.trim();
+  return title.replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-');
+}
+
+function updateURLPreview() {
+  const el       = document.getElementById('url-preview');
+  const fileSlug = getFileSlug();
+  if (!fileSlug) { el.innerHTML = ''; return; }
+  const isDraft  = document.getElementById('draft-toggle').checked;
+  const dir      = isDraft ? '_drafts' : '_posts';
+  const titleSlug = getTitleSlug();
+  const liveURL   = isDraft ? '(draft — not published)' : `${SITE_URL}/${titleSlug}/`;
+  el.innerHTML =
+    `<span class="url-label">file</span><code>${dir}/${fileSlug}.md</code><br>` +
+    `<span class="url-label">url</span><code>${liveURL}</code>`;
+}
+
+function onMetaChange() {
+  updateURLPreview(); scheduleSave();
+  if (currentTab === 'raw') setTab('raw');
+}
+
+// ── DRAFT TOGGLE ──────────────────────────────────────────────────────────
+function onDraftToggle() {
+  const isDraft = document.getElementById('draft-toggle').checked;
+  document.getElementById('draft-sub').textContent =
+    isDraft ? 'Commits to _drafts/ (hidden)' : 'Commits to _posts/ (live)';
+  const btn = document.getElementById('pub-btn');
+  btn.textContent = isDraft ? 'Save draft' : 'Publish post';
+  btn.classList.toggle('draft-mode', isDraft);
+  updateURLPreview();
+}
+
+// ── TAGS ──────────────────────────────────────────────────────────────────
+const tagInput = document.getElementById('tag-input');
+const tagsWrap = document.getElementById('tags-wrap');
+
+function addTag(name) {
+  name = name.trim().toLowerCase().replace(/\s+/g,'-');
+  if (!name || tags.includes(name)) return;
+  tags.push(name); renderTags(); scheduleSave();
+}
+function removeTag(name) {
+  tags = tags.filter(t => t !== name); renderTags(); scheduleSave();
+}
+function renderTags() {
+  tagsWrap.querySelectorAll('.tag-pill').forEach(t => t.remove());
+  tags.forEach(name => {
+    const pill = document.createElement('div');
+    pill.className = 'tag-pill';
+    pill.innerHTML = `${name}<button onclick="removeTag('${name.replace(/'/g,"\\'")}')">×</button>`;
+    tagsWrap.insertBefore(pill, tagInput);
+  });
+}
+tagInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault(); addTag(tagInput.value); tagInput.value = '';
+  } else if (e.key === 'Backspace' && !tagInput.value && tags.length) {
+    removeTag(tags[tags.length - 1]);
+  }
+});
+tagInput.addEventListener('blur', () => {
+  if (tagInput.value.trim()) { addTag(tagInput.value); tagInput.value = ''; }
+});
+tagsWrap.addEventListener('click', () => tagInput.focus());
+
+// ── MARKDOWN TOOLBAR ──────────────────────────────────────────────────────
+function wrap(before, after) {
+  const ta = document.getElementById('md-area');
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  const sel = ta.value.slice(s,e) || 'text';
+  ta.setRangeText(before+sel+after, s, e, 'select');
+  ta.focus(); scheduleSave();
+}
+function wrapBlock(before, after) {
+  const ta = document.getElementById('md-area');
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  ta.setRangeText(before+(ta.value.slice(s,e)||'code here')+after, s, e, 'end');
+  ta.focus(); scheduleSave();
+}
+function insertLine(prefix) {
+  const ta = document.getElementById('md-area');
+  const s = ta.selectionStart;
+  const ls = ta.value.lastIndexOf('\n', s-1) + 1;
+  ta.setRangeText(prefix, ls, ls, 'end');
+  ta.focus(); scheduleSave();
+}
+
+function toggleLinkRow() {
+  const row = document.getElementById('link-row');
+  if (row.classList.contains('open')) { closeLinkRow(); return; }
+  const ta = document.getElementById('md-area');
+  linkSelS = ta.selectionStart; linkSelE = ta.selectionEnd;
+  row.classList.add('open');
+  document.getElementById('link-input').value = '';
+  setTimeout(() => document.getElementById('link-input').focus(), 50);
+}
+function closeLinkRow() {
+  document.getElementById('link-row').classList.remove('open');
+}
+function insertLink() {
+  const url = document.getElementById('link-input').value.trim();
+  if (!url) { closeLinkRow(); return; }
+  const ta  = document.getElementById('md-area');
+  const sel = ta.value.slice(linkSelS, linkSelE) || 'link text';
+  ta.setRangeText(`[${sel}](${url})`, linkSelS, linkSelE, 'end');
+  ta.focus(); closeLinkRow(); scheduleSave();
+}
+document.getElementById('link-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') insertLink();
+  if (e.key === 'Escape') closeLinkRow();
+});
+
+function onBodyInput() {
+  updateWC(); scheduleSave();
+  if (currentTab === 'raw') setTab('raw');
+}
+
+// ── WORD COUNT ────────────────────────────────────────────────────────────
+function updateWC() {
+  const b = document.getElementById('md-area').value;
+  const w = b.trim() ? b.trim().split(/\s+/).length : 0;
+  document.getElementById('wc-line').textContent = `${w} words · ${b.length} chars`;
+}
+
+// ── LOAD EXISTING POSTS ───────────────────────────────────────────────────
+async function togglePostsList() {
+  postsOpen = !postsOpen;
+  const sheet = document.getElementById('posts-sheet');
+  sheet.classList.toggle('open', postsOpen);
+  document.getElementById('load-toggle').textContent = postsOpen ? 'Load post ▴' : 'Load post ▾';
+  if (postsOpen && !postsLoaded) await fetchPostsList();
+}
+
+async function fetchPostsList() {
+  const sheet = document.getElementById('posts-sheet');
+  const msg   = document.getElementById('posts-msg');
+  try {
+    const hdrs = { 'Accept': 'application/vnd.github.v3+json' };
+    if (getPAT()) hdrs['Authorization'] = `token ${getPAT()}`;
+
+    // Fetch _posts and _drafts in parallel; _drafts may 404 if folder doesn't exist yet
+    const [postsRes, draftsRes] = await Promise.all([
+      fetch(`${API_BASE}/contents/_posts?ref=${GH_BRANCH}`,  { headers: hdrs }),
+      fetch(`${API_BASE}/contents/_drafts?ref=${GH_BRANCH}`, { headers: hdrs }),
+    ]);
+
+    const posts  = postsRes.ok  ? (await postsRes.json()).filter(f => f.name.endsWith('.md')).map(f => ({...f, kind:'post'}))  : [];
+    const drafts = draftsRes.ok ? (await draftsRes.json()).filter(f => f.name.endsWith('.md')).map(f => ({...f, kind:'draft'})) : [];
+    const all    = [...drafts, ...posts].sort((a,b) => b.name.localeCompare(a.name));
+
+    sheet.innerHTML = '';
+    if (!all.length) { sheet.innerHTML = '<div class="posts-msg">No posts or drafts found</div>'; return; }
+
+    all.forEach(f => {
+      const m    = f.name.match(/^(\d{4}-\d{2}-\d{2})-(.+)\.md$/);
+      const item = document.createElement('div');
+      item.className = 'post-item';
+      item.innerHTML = `
+        <div class="pi-date">${m ? m[1] : ''}</div>
+        <div class="pi-name">${m ? m[2].replace(/-/g,' ') : f.name}</div>
+        <div class="pi-pill ${f.kind}">${f.kind}</div>
+        <div class="pi-arr">▸</div>`;
+      item.addEventListener('click', () => loadPost(f.name, f.path, f.kind));
+      sheet.appendChild(item);
+    });
+    postsLoaded = true;
+  } catch(e) {
+    if (msg) msg.textContent = `Error: ${e.message}${!getPAT() ? ' — token required' : ''}`;
+  }
+}
+
+async function loadPost(filename, path, kind) {
+  toast('Loading…', '');
+  try {
+    const hdrs = { 'Authorization': `token ${getPAT()}`, 'Accept': 'application/vnd.github.v3+json' };
+    const res  = await fetch(`${API_BASE}/contents/${path}?ref=${GH_BRANCH}`, { headers: hdrs });
+    if (!res.ok) throw new Error(`GitHub ${res.status}`);
+    const data = await res.json();
+    const raw  = decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
+
+    const fmm = raw.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+    if (fmm) {
+      const fm = fmm[1], body = fmm[2].trim();
+      const get = key => { const m = fm.match(new RegExp(`^${key}:\\s*(.+)$`,'m')); return m ? m[1].trim().replace(/^"|"$/g,'') : ''; };
+      document.getElementById('f-title').value   = get('title');
+      document.getElementById('f-layout').value  = get('layout') || 'post';
+      document.getElementById('f-excerpt').value = get('excerpt');
+      const tagsRaw = get('tags');
+      tags = tagsRaw ? tagsRaw.replace(/[\[\]]/g,'').split(',').map(t=>t.trim()).filter(Boolean) : [];
+      renderTags();
+      const dm = filename.match(/^(\d{4}-\d{2}-\d{2})/);
+      if (dm) document.getElementById('f-date').value = dm[1];
+      document.getElementById('md-area').value = body;
+    } else {
+      document.getElementById('md-area').value = raw;
+    }
+
+    // If loading a draft, flip the toggle on and remember where it came from
+    if (kind === 'draft') {
+      sourceDraftPath = path; // e.g. _drafts/2026-06-13-My-Title.md
+      document.getElementById('draft-toggle').checked = true;
+    } else {
+      sourceDraftPath = null;
+      document.getElementById('draft-toggle').checked = false;
+    }
+    onDraftToggle();
+
+    updateURLPreview(); updateWC(); togglePostsList();
+    toast(kind === 'draft' ? 'Draft loaded' : 'Post loaded', 'ok');
+    setTab('write');
+  } catch(e) { toast(`Error: ${e.message}`, 'err'); }
+}
+
+// ── PASTE IMAGE ───────────────────────────────────────────────────────────
+function handlePaste(e) {
+  const items = e.clipboardData?.items;
+  if (!items) return;
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      e.preventDefault(); processImage(item.getAsFile()); return;
+    }
+  }
+}
+
+async function processImage(blob) {
+  const bmp = await createImageBitmap(blob);
+  const MAX = 1800;
+  let w = bmp.width, h = bmp.height;
+  if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  canvas.getContext('2d').drawImage(bmp, 0, 0, w, h);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+  const base64  = dataUrl.split(',')[1];
+
+  const slug  = getFileSlug() || ('post-' + todayISO());
+  const idx   = pastedImages.length + 1;
+  const fname = `img${idx}.jpg`;
+  const ghPath = `${IMG_ROOT}/${slug}/${fname}`;
+  const mdRef  = `![](/${ghPath})`;
+
+  pastedImages.push({ name: fname, base64, ghPath, mdRef, thumb: dataUrl });
+
+  const ta = document.getElementById('md-area');
+  const s  = ta.selectionStart;
+  ta.setRangeText(`\n${mdRef}\n`, s, s, 'end');
+  ta.focus(); renderImgList(); updateWC(); scheduleSave();
+  toast(`Image staged: ${fname}`, '');
+}
+
+function renderImgList() {
+  const list = document.getElementById('img-list');
+  list.innerHTML = '';
+  pastedImages.forEach((img, i) => {
+    const item = document.createElement('div');
+    item.className = 'img-item';
+    item.innerHTML = `
+      <img class="img-thumb" src="${img.thumb}" alt="">
+      <div class="img-info">
+        <div class="img-name">${img.name}</div>
+        <div class="img-path">/${img.ghPath}</div>
+      </div>
+      <button class="img-del" onclick="removeImg(${i})">✕</button>`;
+    list.appendChild(item);
+  });
+}
+
+function removeImg(i) {
+  const img = pastedImages[i];
+  const ta  = document.getElementById('md-area');
+  ta.value  = ta.value.replace(`\n${img.mdRef}\n`,'').replace(img.mdRef,'').replace(/\n{3,}/g,'\n\n');
+  pastedImages.splice(i, 1);
+  renderImgList(); updateWC(); scheduleSave();
+}
+
+// ── GIF HANDLER ───────────────────────────────────────────────────────────
+function handleGifFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const base64 = ev.target.result.split(',')[1];
+    const slug   = getFileSlug() || ('post-' + todayISO());
+    const idx    = pastedImages.length + 1;
+    const fname  = `gif${idx}.gif`;
+    const ghPath = `${IMG_ROOT}/${slug}/${fname}`;
+    const mdRef  = `![](/${ghPath})`;
+    pastedImages.push({ name: fname, base64, ghPath, mdRef, thumb: ev.target.result, isGif: true });
+    const ta = document.getElementById('md-area');
+    const s  = ta.selectionStart;
+    ta.setRangeText(`\n${mdRef}\n`, s, s, 'end');
+    ta.focus(); renderImgList(); updateWC(); scheduleSave();
+    toast(`GIF staged: ${fname}`, '');
+  };
+  reader.readAsDataURL(file);
+  e.target.value = ''; // reset so same file can be picked again
+}
+
+// ── HANDOFF DOCS (multi) ──────────────────────────────────────────────────
+function handleHandoffFile(e) {
+  const file = e.target.files[0];
+  if (file) readHandoffFile(file);
+  e.target.value = '';
+}
+function readHandoffFile(file) {
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const slug    = getFileSlug() || ('handoff-' + todayISO());
+    const fname   = file.name.replace(/[^\w.-]/g,'-');
+    const ghPath  = `${SHARED_DIR}/${slug}/${fname}`;
+    const siteURL = `${SITE_URL}/${SHARED_DIR}/${slug}/${fname}`;
+    handoffs.push({ name: fname, content: ev.target.result, ghPath, siteURL });
+    renderHandoffList();
+    toast(`Staged: ${fname}`, '');
+  };
+  reader.readAsText(file);
+}
+function renderHandoffList() {
+  const list = document.getElementById('handoff-list');
+  list.innerHTML = '';
+  handoffs.forEach((hf, i) => {
+    const item = document.createElement('div');
+    item.className = 'img-item';
+    const mdLink = `[view handoff](${hf.siteURL})`;
+    item.innerHTML = `
+      <div class="handoff-icon" style="font-size:18px;flex-shrink:0">📄</div>
+      <div class="img-info">
+        <div class="img-name">${hf.name}</div>
+        <div class="img-path">/${hf.ghPath}</div>
+        <div style="font-size:9px;margin-top:3px">
+          <a style="color:var(--accent);cursor:pointer" onclick="copyHFLink(${i})">tap to copy link</a>
+        </div>
+      </div>
+      <button class="img-del" onclick="removeHandoff(${i})">✕</button>`;
+    list.appendChild(item);
+  });
+}
+function removeHandoff(i) {
+  handoffs.splice(i, 1);
+  renderHandoffList();
+}
+function copyHFLink(i) {
+  const hf = handoffs[i];
+  if (!hf) return;
+  navigator.clipboard.writeText(`[view handoff](${hf.siteURL})`)
+    .then(() => toast('Link copied', 'ok'))
+    .catch(() => {
+      // fallback for Safari
+      const ta = document.createElement('textarea');
+      ta.value = `[view handoff](${hf.siteURL})`;
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+      document.body.removeChild(ta); toast('Link copied', 'ok');
+    });
+}
+
+// ── FRONT MATTER BUILDER ──────────────────────────────────────────────────
+function buildFrontMatter() {
+  const title   = document.getElementById('f-title').value.trim();
+  const date    = document.getElementById('f-date').value;
+  const layout  = document.getElementById('f-layout').value.trim() || 'post';
+  const excerpt = document.getElementById('f-excerpt').value.trim();
+  let fm = '---\n';
+  fm += `layout: ${layout}\n`;
+  fm += `title: "${title.replace(/"/g,'\\"')}"\n`;
+  if (date)        fm += `date: ${date}\n`;
+  if (tags.length) fm += `tags: [${tags.join(', ')}]\n`;
+  if (excerpt)     fm += `excerpt: "${excerpt.replace(/"/g,'\\"')}"\n`;
+  fm += '---\n';
+  return fm;
+}
+function buildDocument() {
+  return buildFrontMatter() + '\n' + document.getElementById('md-area').value.trim() + '\n';
+}
+
+// ── GITHUB API ────────────────────────────────────────────────────────────
+function ghHeaders() {
+  const pat = getPAT();
+  if (!pat) throw new Error('NO_PAT');
+  return { 'Authorization': `token ${pat}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' };
+}
+async function ghGetSHA(path) {
+  const res = await fetch(`${API_BASE}/contents/${path}?ref=${GH_BRANCH}`, { headers: ghHeaders() });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`GitHub ${res.status}`);
+  return (await res.json()).sha;
+}
+async function ghPut(path, content64, sha, message) {
+  const body = { message, content: content64, branch: GH_BRANCH };
+  if (sha) body.sha = sha;
+  const res = await fetch(`${API_BASE}/contents/${path}`, {
+    method: 'PUT', headers: ghHeaders(), body: JSON.stringify(body)
+  });
+  if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.message || `GitHub ${res.status}`); }
+  return res.json();
+}
+function b64(str)   { return btoa(unescape(encodeURIComponent(str))); }
+
+async function ghDelete(path, sha, message) {
+  const body = { message, sha, branch: GH_BRANCH };
+  const res  = await fetch(`${API_BASE}/contents/${path}`, {
+    method: 'DELETE', headers: ghHeaders(), body: JSON.stringify(body)
+  });
+  if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.message || `GitHub ${res.status}`); }
+  return res.json();
+}
+
+// ── PUBLISH ───────────────────────────────────────────────────────────────
+async function publish() {
+  if (!getPAT()) { openPAT(); return; }
+  const title = document.getElementById('f-title').value.trim();
+  if (!title) { toast('Title is required', 'err'); return; }
+  if (!document.getElementById('f-date').value) { toast('Date is required', 'err'); return; }
+
+  const fileSlug = getFileSlug();
+  const isDraft  = document.getElementById('draft-toggle').checked;
+  const dir      = isDraft ? '_drafts' : '_posts';
+  const postPath = `${dir}/${fileSlug}.md`;
+
+  const btn = document.getElementById('pub-btn');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner"></span>${isDraft ? 'Saving…' : 'Publishing…'}`;
+
+  try {
+    // Images
+    for (const img of pastedImages) {
+      toast(`Uploading ${img.name}…`, '');
+      await ghPut(img.ghPath, img.base64, await ghGetSHA(img.ghPath), `Add image ${img.name}`);
+    }
+    // Handoff docs
+    for (const hf of handoffs) {
+      toast(`Uploading ${hf.name}…`, '');
+      await ghPut(hf.ghPath, b64(hf.content), await ghGetSHA(hf.ghPath), `Add handoff ${hf.name}`);
+    }
+    // Post
+    toast('Writing post…', '');
+    await ghPut(postPath, b64(buildDocument()), await ghGetSHA(postPath),
+      isDraft ? `Draft: ${title}` : `Post: ${title}`);
+
+    localStorage.removeItem(DRAFT_KEY);
+
+    // If we loaded a draft and are now publishing to _posts, delete the draft
+    if (!isDraft && sourceDraftPath) {
+      try {
+        toast('Cleaning up draft…', '');
+        const draftSHA = await ghGetSHA(sourceDraftPath);
+        if (draftSHA) {
+          await ghDelete(sourceDraftPath, draftSHA, `Remove draft after publishing: ${title}`);
+        }
+        sourceDraftPath = null;
+      } catch(delErr) {
+        // Non-fatal — post is live, draft cleanup just failed
+        console.warn('Draft delete failed:', delErr);
+        toast('Published ✓ (draft cleanup failed — delete manually)', 'ok');
+      }
+    }
+
+    showSuccess(postPath, fileSlug, isDraft);
+  } catch(err) {
+    console.error(err);
+    if (err.message === 'NO_PAT') openPAT();
+    else toast(`Error: ${err.message}`, 'err');
+    btn.disabled = false;
+    btn.textContent = isDraft ? 'Save draft' : 'Publish post';
+  }
+}
+
+function showSuccess(postPath, fileSlug, isDraft) {
+  document.getElementById('pub-btn').style.display = 'none';
+  document.getElementById('success-block').classList.add('show');
+  document.getElementById('success-path').textContent = postPath;
+  const titleSlug = getTitleSlug();
+  document.getElementById('success-url').textContent =
+    isDraft ? '(draft — not live yet)' : `${SITE_URL}/${titleSlug}/`;
+  document.getElementById('success-gh').href =
+    `https://github.com/${GH_USER}/${GH_REPO}/blob/${GH_BRANCH}/${postPath}`;
+  toast(isDraft ? 'Draft saved ✓' : 'Published ✓', 'ok');
+}
+
+function resetForm() {
+  ['f-title','f-excerpt','md-area'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-date').value   = todayISO();
+  document.getElementById('f-layout').value = 'post';
+  document.getElementById('draft-toggle').checked = false;
+  tags = []; pastedImages = []; handoffs = []; sourceDraftPath = null; postsLoaded = false;
+  renderTags(); renderImgList(); renderHandoffList();
+  onDraftToggle(); updateURLPreview(); updateWC();
+  document.getElementById('success-block').classList.remove('show');
+  const btn = document.getElementById('pub-btn');
+  btn.style.display = ''; btn.disabled = false;
+  btn.textContent = 'Publish post'; btn.classList.remove('draft-mode');
+  setTab('write'); window.scrollTo(0,0);
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast' + (type ? ' '+type : '');
+  requestAnimationFrame(() => el.classList.add('show'));
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ── SIMPLE MARKDOWN RENDERER ──────────────────────────────────────────────
+function simpleMarkdown(md) {
+  let h = md
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/```[\w]*\n([\s\S]*?)```/gm,(_,c)=>`<pre><code>${c.trim()}</code></pre>`)
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
+    .replace(/^## (.+)$/gm,'<h2>$1</h2>')
+    .replace(/^# (.+)$/gm,'<h1>$1</h1>')
+    .replace(/^&gt; (.+)$/gm,'<blockquote>$1</blockquote>')
+    .replace(/^---$/gm,'<hr>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/_(.+?)_/g,'<em>$1</em>')
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g,'<img src="$2" alt="$1">')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2">$1</a>')
+    .replace(/^- (.+)$/gm,'<li>$1</li>')
+    .replace(/^\d+\. (.+)$/gm,'<li>$1</li>');
+  return h.split(/\n\n+/).map(block => {
+    block = block.trim();
+    if (!block) return '';
+    if (/^<(h[1-6]|pre|blockquote|hr)/.test(block)) return block;
+    if (block.startsWith('<li>')) return `<ul>${block}</ul>`;
+    return `<p>${block.replace(/\n/g,'<br>')}</p>`;
+  }).join('\n');
+}
+</script>
+</body>
+</html>
