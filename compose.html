@@ -494,7 +494,7 @@ body {
     </div>
   </div>
   <textarea class="md-area" id="md-area"
-    placeholder="Write your post in Markdown…&#10;&#10;Paste a screenshot (⌘V) to embed an image."
+    placeholder="Write your post in Markdown…&#10;&#10;Single return = line break&#10;Double return = paragraph space&#10;&#10;Paste a screenshot (⌘V) to embed an image."
     oninput="onBodyInput()" onpaste="handlePaste(event)"></textarea>
   <div class="preview-pane" id="preview-pane"></div>
   <div class="raw-pane" id="raw-pane"></div>
@@ -1130,20 +1130,9 @@ function buildFrontMatter() {
   fm += '---\n';
   return fm;
 }
-function normaliseBody(raw) {
-  // Single newline → two trailing spaces + newline (Kramdown <br>)
-  // Double newline → paragraph break with spacing (stays as-is)
-  return raw
-    .replace(/\r\n/g, '\n')           // normalise line endings
-    .replace(/\n{2,}/g, '\x00')        // protect existing blank lines
-    .replace(/\n/g, '  \n')            // single newline → trailing spaces = <br>
-    .replace(/\x00/g, '\n\n')         // restore paragraph breaks
-    .replace(/\n{3,}/g, '\n\n')       // collapse 3+ to 2
-    .trim();
-}
-
 function buildDocument() {
-  const body = normaliseBody(document.getElementById('md-area').value);
+  // Commit body exactly as written — double newline = paragraph break in Kramdown
+  const body = document.getElementById('md-area').value.trim();
   return buildFrontMatter() + '\n' + body + '\n';
 }
 
