@@ -1131,16 +1131,14 @@ function buildFrontMatter() {
   return fm;
 }
 function normaliseBody(raw) {
-  // User writes with single newlines between paragraphs.
-  // Kramdown needs a blank line (double newline) to create a paragraph break.
-  // Simple rule: every single newline becomes a double newline.
-  // Already-doubled newlines stay as-is (collapse 3+ to 2 just in case).
+  // Single newline → two trailing spaces + newline (Kramdown <br>)
+  // Double newline → paragraph break with spacing (stays as-is)
   return raw
-    .replace(/\r\n/g, '\n')          // normalise line endings
-    .replace(/\n{2,}/g, '\x00')       // protect existing blank lines
-    .replace(/\n/g, '\n\n')           // single newline → double
-    .replace(/\x00/g, '\n\n')        // restore protected blank lines
-    .replace(/\n{3,}/g, '\n\n')      // collapse any 3+ to 2
+    .replace(/\r\n/g, '\n')           // normalise line endings
+    .replace(/\n{2,}/g, '\x00')        // protect existing blank lines
+    .replace(/\n/g, '  \n')            // single newline → trailing spaces = <br>
+    .replace(/\x00/g, '\n\n')         // restore paragraph breaks
+    .replace(/\n{3,}/g, '\n\n')       // collapse 3+ to 2
     .trim();
 }
 
