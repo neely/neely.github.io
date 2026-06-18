@@ -495,7 +495,11 @@ body {
     </div>
   </div>
   <textarea class="md-area" id="md-area"
-    placeholder="Write your post in Markdown…&#10;&#10;Single return = line break&#10;Double return = paragraph space&#10;&#10;Paste a screenshot (⌘V) to embed an image."
+    placeholder="Write your post in Markdown…
+
+↵↵ = new paragraph · ¶ = extra space
+
+Paste a screenshot (⌘V) to embed an image."
     oninput="onBodyInput()" onpaste="handlePaste(event)"></textarea>
   <div class="preview-pane" id="preview-pane"></div>
   <div class="raw-pane" id="raw-pane"></div>
