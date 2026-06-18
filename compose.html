@@ -486,6 +486,7 @@ body {
     <button class="md-btn" onclick="insertLine('> ')">❝</button>
     <button class="md-btn" onclick="insertLine('- ')">—</button>
     <button class="md-btn" onclick="insertLine('---\n')">──</button>
+    <button class="md-btn" onclick="insertPara()" title="Extra space">&para;</button>
     <div class="link-row" id="link-row">
       <input class="link-input" id="link-input" type="url"
         placeholder="https://" autocorrect="off" autocapitalize="none">
@@ -499,7 +500,7 @@ body {
   <div class="preview-pane" id="preview-pane"></div>
   <div class="raw-pane" id="raw-pane"></div>
   <div class="wc-line" id="wc-line">0 words · 0 chars</div>
-  <div class="paste-hint" style="border-top:1px solid var(--border);border-bottom:none">↵ = same paragraph &nbsp;·&nbsp; ↵↵ = new paragraph with space</div>
+  <div class="paste-hint" style="border-top:1px solid var(--border);border-bottom:none">↵↵ = new paragraph &nbsp;·&nbsp; ¶ = extra space</div>
 </div>
 
 <!-- IMAGES -->
@@ -846,6 +847,13 @@ function toggleLinkRow() {
 function closeLinkRow() {
   document.getElementById('link-row').classList.remove('open');
 }
+function insertPara() {
+  const ta = document.getElementById('md-area');
+  const s  = ta.selectionStart;
+  ta.setRangeText('\n&nbsp;\n', s, s, 'end');
+  ta.focus(); scheduleSave();
+}
+
 function insertLink() {
   const url = document.getElementById('link-input').value.trim();
   if (!url) { closeLinkRow(); return; }
