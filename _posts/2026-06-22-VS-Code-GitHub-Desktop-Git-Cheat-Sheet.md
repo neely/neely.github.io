@@ -6,8 +6,6 @@ tags: [github, gitlab, vscode]
 excerpt: "I need a cheat sheet for using git in VSCode or desktop app, and this is it."
 ---
 
-# VS Code + GitHub Desktop Git Cheat Sheet
-
 > Yes this is LLM generated, but with my specific questions and goals. There is a short version as well, [here](https://neely.github.io/shared/2026-06-25-VS-Code-GitHub-Desktop-Git-Cheat-Sheet/git-quick-loops.md). This is for me. B-)
 
 &nbsp;
