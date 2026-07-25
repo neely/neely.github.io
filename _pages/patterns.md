@@ -351,6 +351,45 @@ Four files with distinct roles:
 
 ---
 
+## Tier 2 — GitHub as the Backend (continued)
+
+---
+
+### Pattern 7: Cloudflare Worker as Full Backend Proxy + Scheduled Action Pipeline
+
+**What it is**
+An evolution of Patterns 3 and 4 that removes the PAT from the browser entirely. Instead of the client holding a GitHub token (in `localStorage` or `sessionStorage`) and calling GitHub's API directly, a Cloudflare Worker sits between the browser and *every* external API — GitHub's Contents API and any third-party services — holding every secret server-side. Paired with a scheduled GitHub Action that runs independently of any browser session, aggregating third-party data and filing GitHub Issues as an ad-hoc notification channel.
+
+**How it works**
+- **The client (`app.js`)** — one HTML/JS app with no PAT prompt anywhere. Every read and write goes through the Worker's own routes (`/api/data/{key}` for GET/PUT against JSON files in the repo, `/api/steam-*` and `/api/itad-*` for proxied third-party calls). The browser holds zero secrets — auth to *the app* (Cloudflare Access, email OTP) is entirely separate from auth to the *data*, which the person never touches or could leak by pasting a token somewhere.
+- **The Worker (`worker/steam-proxy.js`)** — a single Cloudflare Worker holding three secrets: `GITHUB_PAT` (fine-grained, Contents read/write only — same shape as Pattern 4's PAT, but living server-side instead of in the browser), plus two third-party API keys. A generic `DATA_PATHS` map routes any `/api/data/{key}` request to a specific file in the repo, so adding a new synced file is a one-line config change, not a new route. Each third-party proxy route adds its own key server-side before forwarding, so the browser's outbound calls never carry a vendor credential either.
+- **Cloudflare Access (the auth layer)** — sits in front of the whole site, gating it with email OTP. This replaces the "PAT prompt as login" pattern from Patterns 3/4 entirely: the person authenticates to the app, not to GitHub.
+- **The scheduled Action (weekly cron)** — two scripts run in sequence, independent of any browser session ever being open. The first calls a third-party API directly (its own Actions secret, a *separate* secret store from the Worker's copy of the same key — they don't share, so the same credential value has to be pasted into both places by hand) to refresh source-of-truth data, then commits the results directly via git using the Action's own token — no Worker involved for this write path at all. The second script checks the refreshed data against alert criteria and **files a GitHub Issue per newly-qualifying hit**, using GitHub's own Issues + notifications as the push channel instead of standing up an email/SMS service. De-duplication uses a small JSON ledger file committed alongside the other data, keyed however makes sense for the criterion (a price, an ID, a date) — so a qualifying condition that holds steady only alerts once, and a genuine state change alerts again.
+- **Split write ownership, by file, not uniform** — some JSON files are written *only* by the scheduled Action (bypassing the Worker, straight to git); others are written by *both* the Action and live user-driven actions (through the Worker's PUT route); others are written live-only and never touched by the Action. Matched deliberately to how fresh each piece of data actually needs to be and who's the authoritative writer for it, rather than one blanket sync policy for everything.
+
+**Examples**
+- [neely/deckhand](https://github.com/neely/deckhand) — a personal Steam library/wishlist/queue tracker: live price data, a weekly-Action-driven playtime dashboard, and automated deal alerts (historic-low price, bundle value) filed as GitHub Issues. Built July 2026.
+
+**Constraints (beyond global)**
+- Requires standing up an actual Cloudflare Worker (not just Pages) — a real step up in setup complexity from Patterns 3/4's zero-backend approach, though still free-tier with nothing to manage day-to-day.
+- Two separate secret stores for anything both the Action and the Worker need — GitHub Actions secrets and Cloudflare Worker secrets are entirely disconnected, so shared credentials drift apart unless kept in sync by hand.
+- Cloudflare Access needs its own setup (a Cloudflare Zero Trust team), a separate moving piece from the Worker/Pages config — still free-tier for a handful of users.
+- GitHub Issues as a notification channel only works if the person already watches the repo (for email/mobile push via GitHub's own app) — it's borrowed infrastructure, not a general-purpose alert system.
+
+**Limitations**
+- **Still single-writer, same as Patterns 3/4** — no real conflict resolution if a live write and a scheduled Action write land in the same moment; last-write-wins.
+- **The Worker becomes a real dependency** — Patterns 3/4 have zero backend to keep running at all; this pattern has one small stateless service that gates every read and write, so a Cloudflare outage takes the whole app down, not just the write path.
+- **De-dupe ledgers are a hand-rolled pattern, not a shared abstraction** — each new alert-style criterion needs its own ledger file and its own comparison logic; nothing reusable yet.
+- **Issue-based alerts don't scale past "a repo one person watches"** — fine for personal use, wouldn't generalize to multiple recipients without a real notification service behind it.
+
+**How it could be upgraded**
+- Add a lightweight secret-sync step (or at minimum a documented note) so Action/Worker secret pairs don't silently drift out of sync.
+- Generalize the de-dupe ledger into a small shared helper (`hasAlerted(key, value)` / `markAlerted(key, value)`) reusable across every alert type instead of hand-rolling each one's comparison logic.
+- Replace GitHub Issues with a proper push channel (a Worker-triggered webhook to Discord/ntfy/a phone notification service) if this needs to support more than one recipient.
+- Add a `/health` route on the Worker so an outage is visible on its own, before it's discovered by a failed write.
+
+---
+
 ## Where Hyde Fits
 
 [Hyde](https://github.com/neely/hyde) — the Jekyll post composer covered in [this post](/Building-a-Mobile-First-Post-Composer-for-Jekyll/) — is a close cousin of **Pattern 4**: GitHub as database, fine-grained PAT-gated write, no processing pipeline. The difference is what's being written — Markdown posts and front matter instead of JSON ledger rows — but the underlying mechanics (Contents API, SHA-based updates, no server) are the same shape.
@@ -370,3 +409,4 @@ Four files with distinct roles:
 | 2026-05-18 | Pattern 6: Google Apps Script — Shared Backend, Multiple Apps, Separate Dashboard (iron-tide + workout-dashboard)    |
 | 2026-05-18 | Reorganized into tiers with intro and comparison table                                                               |
 | 2026-06-25 | Added Hyde cross-reference                                                                                           |
+| 2026-07-25 | Pattern 7: Cloudflare Worker as Full Backend Proxy + Scheduled Action Pipeline (deckhand)                            |
