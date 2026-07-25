@@ -46,6 +46,22 @@ Google Apps Script provides a real server-side execution environment — somethi
 
 ---
 
+## A Note on How These Get Built: Session Continuity
+
+The patterns above are snapshots of finished architectures. What they don't show is how each one actually got built — in many separate chat sessions with an AI assistant, no persistent memory between them, sometimes days or weeks apart, always starting cold.
+
+Starting with [deckhand](https://github.com/neely/deckhand) (July 2026) and now [radio](https://github.com/neely/radio) too, new projects start from a shared template: [agent-context-project-template](https://github.com/neely/agent-context-project-template). Five files, read in a fixed order at the start of every session:
+
+1. **`AGENTS.md`** — the actual protocol. Read order, how to make edits (targeted, not full-file rewrites), commit conventions (straight to main, no branches), which markers mean "don't touch this" (`(locked)`, "intentional, not a bug", a recorded dead-end), a start-of-session sanity check (does PLAN's status block actually match NOTES and the real repo — not just what got written last time), and a shutdown routine to run at the end of every session.
+2. **`PLAN.md`** — a status block at the top (active phase, last updated, next concrete action) plus a checklist per phase. One glance answers "where are we."
+3. **`NOTES.md`** — the *why* behind decisions, organized by topic rather than by date: what's locked and shouldn't be relitigated, what looks like a bug but isn't, permanent limitations, dead-ends already tried and rejected.
+4. **`JOURNAL.md`** — a running debrief, one entry appended to the top per session, answering a short fixed set of questions (biggest uncertainty, unstated assumptions, what's missing, what would make the process better).
+5. **`README.md`** — not part of the read path at all; it's for a human landing on the repo cold, kept in sync as a side effect of the shutdown routine rather than read for context.
+
+The point: a fresh session with zero memory of anything prior should be able to read four files and pick up exactly where the last one left off — without the person re-explaining context, re-stating decisions already made, or a session accidentally undoing something that was deliberately settled weeks earlier. Patterns 7 and 8 above were both built this way — every phase started with a read of `AGENTS.md`/`PLAN.md`/`NOTES.md`, and every session ended by updating the status block and NOTES rather than leaving it stale for the next cold start.
+
+---
+
 ## Global Constraints
 
 These apply to **all patterns** in this guide unless noted otherwise:
@@ -396,8 +412,6 @@ An evolution of Patterns 3 and 4 that removes the PAT from the browser entirely.
 
 ---
 
----
-
 ### Pattern 8: Static Broadcast App — Read-Only Runtime, Claude as the Write Agent, Worker as Stream Proxy
 
 **What it is**
@@ -458,4 +472,5 @@ All writes during development — HTML edits, station data updates, icon commits
 | 2026-06-25 | Added Hyde cross-reference                                                                                           |
 | 2026-07-25 | Pattern 7: Cloudflare Worker as Full Backend Proxy + Scheduled Action Pipeline (deckhand)                            |
 | 2026-07-25 | Pattern 8: Static Broadcast App — Read-Only Runtime, Claude as Write Agent, Worker as Stream Proxy (radio/The Dial) |
+| 2026-07-25 | Added "A Note on How These Get Built: Session Continuity" — the agent-context-project-template workflow (AGENTS.md/PLAN.md/NOTES.md/JOURNAL.md) used across deckhand and radio                          |
 
