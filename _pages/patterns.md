@@ -46,19 +46,9 @@ Google Apps Script provides a real server-side execution environment — somethi
 
 ---
 
-## A Note on How These Get Built: Session Continuity
+## A Note on How These Get Built
 
-The patterns above are snapshots of finished architectures. What they don't show is how each one actually got built — in many separate chat sessions with an AI assistant, no persistent memory between them, sometimes days or weeks apart, always starting cold.
-
-Starting with [deckhand](https://github.com/neely/deckhand) (July 2026) and now [radio](https://github.com/neely/radio) too, new projects start from a shared template: [agent-context-project-template](https://github.com/neely/agent-context-project-template). Five files, read in a fixed order at the start of every session:
-
-1. **`AGENTS.md`** — the actual protocol. Read order, how to make edits (targeted, not full-file rewrites), commit conventions (straight to main, no branches), which markers mean "don't touch this" (`(locked)`, "intentional, not a bug", a recorded dead-end), a start-of-session sanity check (does PLAN's status block actually match NOTES and the real repo — not just what got written last time), and a shutdown routine to run at the end of every session.
-2. **`PLAN.md`** — a status block at the top (active phase, last updated, next concrete action) plus a checklist per phase. One glance answers "where are we."
-3. **`NOTES.md`** — the *why* behind decisions, organized by topic rather than by date: what's locked and shouldn't be relitigated, what looks like a bug but isn't, permanent limitations, dead-ends already tried and rejected.
-4. **`JOURNAL.md`** — a running debrief, one entry appended to the top per session, answering a short fixed set of questions (biggest uncertainty, unstated assumptions, what's missing, what would make the process better).
-5. **`README.md`** — not part of the read path at all; it's for a human landing on the repo cold, kept in sync as a side effect of the shutdown routine rather than read for context.
-
-The point: a fresh session with zero memory of anything prior should be able to read four files and pick up exactly where the last one left off — without the person re-explaining context, re-stating decisions already made, or a session accidentally undoing something that was deliberately settled weeks earlier. Patterns 7 and 8 above were both built this way — every phase started with a read of `AGENTS.md`/`PLAN.md`/`NOTES.md`, and every session ended by updating the status block and NOTES rather than leaving it stale for the next cold start.
+The patterns above are snapshots of finished architectures. What they don't show is how each one actually gets built. That's a separate axis from *where data lives* — it's covered on its own in [Development Workflow](#development-workflow) at the end of this guide.
 
 ---
 
@@ -276,6 +266,8 @@ Two HTML files, two JSON files, one GitHub repo:
 - Add a `manifest.json` and service worker to cache `index.html` and the last-fetched ledger for offline reading.
 - Make the repo private and route all reads through the authenticated API.
 
+> **Where Hyde fits:** [Hyde](https://github.com/neely/hyde) — the Jekyll post composer covered in [this post](/Building-a-Mobile-First-Post-Composer-for-Jekyll/), live on [neely.github.io](https://neely.github.io) — is a close cousin of this pattern: GitHub as database, fine-grained PAT-gated write, no processing pipeline. The difference is what's being written (Markdown posts and front matter instead of JSON ledger rows), but the mechanics — Contents API, SHA-based updates, no server — are the same shape.
+
 ---
 
 ## Tier 3 — Google as the Backend
@@ -339,8 +331,8 @@ Four files with distinct roles:
 **The architecture in one sentence:** workout apps → `fetch POST /exec` → Apps Script `doPost()` → Google Sheet rows; dashboard → `fetch GET /exec` → Apps Script `doGet()` → JSON → rendered analytics.
 
 **Examples**
-- `iron-tide.html` — Iron Tide: an 8-week double kettlebell program (ABC complex + carries on Day A; press ladder + snatches + push/pull on Day B). EMOM arc timer, phase navigation, real-time round logging, session summary. PWA-ready with apple-touch-icon.
-- `workout-dashboard.html` — a read-only analytics dashboard aggregating sessions from all programs into a single view with tonnage charts, heatmap, and session history.
+- [neely/kb-apps](https://github.com/neely/kb-apps) (private) — `iron-tide.html`: Iron Tide, an 8-week double kettlebell program (ABC complex + carries on Day A; press ladder + snatches + push/pull on Day B). EMOM arc timer, phase navigation, real-time round logging, session summary. PWA-ready with apple-touch-icon. Live at [kb-apps.benneely.com](https://kb-apps.benneely.com).
+- Same repo — `workout-dashboard.html`: a read-only analytics dashboard aggregating sessions from all programs into a single view with tonnage charts, heatmap, and session history.
 
 **Constraints (beyond global)**
 - The Apps Script `/exec` URL is **public in the HTML source** of every workout app. Anyone who finds it can POST fake sessions or GET all your data. Acceptable for a personal fitness log; not for sensitive data.
@@ -384,7 +376,7 @@ An evolution of Patterns 3 and 4 that removes the PAT from the browser entirely.
 - **Split write ownership, by file, not uniform** — some JSON files are written *only* by the scheduled Action (bypassing the Worker, straight to git); others are written by *both* the Action and live user-driven actions (through the Worker's PUT route); others are written live-only and never touched by the Action. Matched deliberately to how fresh each piece of data actually needs to be and who's the authoritative writer for it, rather than one blanket sync policy for everything.
 
 **Examples**
-- [neely/deckhand](https://github.com/neely/deckhand) — a personal Steam library/wishlist/queue tracker: live price data, a weekly-Action-driven playtime dashboard, and automated deal alerts (historic-low price, bundle value) filed as GitHub Issues. Built July 2026.
+- [neely/deckhand](https://github.com/neely/deckhand) — a personal Steam library/wishlist/queue tracker: live price data, a weekly-Action-driven playtime dashboard, and automated deal alerts (historic-low price, bundle value) filed as GitHub Issues. Live at [deckhand.benneely.com](https://deckhand.benneely.com). Built July 2026.
 
 **Constraints (beyond global)**
 - Requires standing up an actual Cloudflare Worker (not just Pages) — a real step up in setup complexity from Patterns 3/4's zero-backend approach, though still free-tier with nothing to manage day-to-day.
@@ -406,12 +398,6 @@ An evolution of Patterns 3 and 4 that removes the PAT from the browser entirely.
 
 ---
 
-## Where Hyde Fits
-
-[Hyde](https://github.com/neely/hyde) — the Jekyll post composer covered in [this post](/Building-a-Mobile-First-Post-Composer-for-Jekyll/) — is a close cousin of **Pattern 4**: GitHub as database, fine-grained PAT-gated write, no processing pipeline. The difference is what's being written — Markdown posts and front matter instead of JSON ledger rows — but the underlying mechanics (Contents API, SHA-based updates, no server) are the same shape.
-
----
-
 ### Pattern 8: Static Broadcast App — Read-Only Runtime, Claude as the Write Agent, Worker as Stream Proxy
 
 **What it is**
@@ -427,7 +413,7 @@ One HTML file is the entire app. It contains all styles, logic, station data (as
 - **No user auth, ever** — there is no PAT prompt, no login, no `localStorage`, no `sessionStorage`. The app is fully public and fully anonymous.
 
 **The development pattern**
-All writes during development — HTML edits, station data updates, icon commits, PLAN.md and NOTES.md maintenance — were made by Claude directly via the GitHub Contents API using a short-lived fine-grained PAT (scoped to Contents read/write on this repo only, pasted into chat, revoked after each session). The developer never opened a laptop. Testing happened on the same phone used to build it, at the live Cloudflare Pages URL, after every push. This made mobile layout issues immediately visible — tap target sizes, sticky header behavior, scroll behavior on station navigation — rather than discovered after the fact.
+All writes during development — HTML edits, station data updates, icon commits, PLAN.md and NOTES.md maintenance — were made by Claude directly via the GitHub Contents API using a short-lived fine-grained PAT (scoped to Contents read/write on this repo only, pasted into chat, revoked after each session). The developer never opened a laptop. Testing happened on the same phone used to build it, at the live Cloudflare Pages URL, after every push. This made mobile layout issues immediately visible — tap target sizes, sticky header behavior, scroll behavior on station navigation — rather than discovered after the fact. This was also the project where the session-continuity system (see [Development Workflow](#development-workflow) below) went from "template I'm using" to "the only way I work now" — every phase of radio ran end-to-end from chat, no editor open at any point.
 
 **Examples**
 - [neely/radio](https://github.com/neely/radio) — "The Dial": a web radio tuner with 15 community, college, and public radio stations. Rotary drum navigation, real logos, pixel-sampled accent colors per station, donate links, responsive mobile layout. Live at [radio.benneely.com](https://radio.benneely.com). Built July 2026.
@@ -457,6 +443,60 @@ All writes during development — HTML edits, station data updates, icon commits
 
 ---
 
+## Development Workflow
+
+Everything above is about **where an app's data lives**. This section is a different axis entirely: **how the app actually gets built**, across many separate chat sessions with an AI assistant that has no memory between them — sometimes days or weeks apart, always starting cold. As of [deckhand](https://github.com/neely/deckhand) and [radio](https://github.com/neely/radio) (July 2026), this isn't a template being tried out — it's the only way new projects get built here, and for some projects (Pattern 8 above) it's fully phone-only: no laptop opens at any point.
+
+Full write-up: [Solo Agent Context Kit](https://neely.github.io/agent-context-kit/). Template repo: [agent-context-project-template](https://github.com/neely/agent-context-project-template).
+
+**The one principle:** every file exists to survive a cold start. The test for anything written into these files is whether a fresh chat, with zero memory of the project, would do the right thing from it alone — which is why *why we decided* and *what we rejected* matter as much as *what we did*.
+
+### The five files
+
+| File | Reader | Answers |
+| ---- | ------ | ------- |
+| `README.md` | A human arriving cold | What is this, where's it live, how do I run it |
+| `AGENTS.md` | The agent | How should I behave, what's off-limits |
+| `PLAN.md` | Agent + mid-build you | What's done, what's active, what's next (status block lives here, at the top — one home, never duplicated) |
+| `NOTES.md` | Agent + mid-build you | Why is it built this way — decisions, dead-ends, "intentional not a bug" |
+| `JOURNAL.md` | Future you | How did we get here, what was uncertain (append-only, newest on top) |
+
+No `pointer.md`: a single-file "most recent summary" is a reasonable instinct, but the PLAN status block already does that job inline — a second file whose whole purpose is holding current state is one more thing that can drift out of sync. Skip it.
+
+**Two optional additions, layered on top when they earn their place:**
+- **`reference/`** — for *vendored* external material (API docs, a scraped spec, ported source) that doesn't belong in NOTES, which is reasoning and should stay skimmable. Must be distilled, not a raw dump — a 400-page spec pasted in whole is worse than a link. Read targeted, only when the task needs it.
+- **A grounding spec** — a rung above AGENTS.md, for domains (scientific software especially) where field-level community consensus outranks any one project's preferences. Lives once, authoritatively, outside any single project, with a one-line hook in AGENTS.md deferring to it. No-op on projects without one. Example: [OmicsGrounding/proteomics-grounding](https://github.com/OmicsGrounding/proteomics-grounding).
+
+### The session loop
+
+- **Init** — read `AGENTS.md`, then PLAN's status block and active phase, skim NOTES for relevance, state the next step before writing any code. If PLAN left an embedded handoff prompt from last session, start there instead.
+- **During** — targeted edits only, never a full-file rewrite for a few lines. Commit as you go, plain messages, straight to `main`, no branches, no squash, no prefixes — commits are the in-session safety net.
+- **Shutdown** — update PLAN's status block, tick finished checkboxes, add new decisions/dead-ends to NOTES, sync README if it describes anything that changed, run the debrief into JOURNAL, then commit **and push**, reporting each step's result rather than a blanket "done." Push is the one that silently gets skipped most often.
+
+### The debrief
+
+Appended to the top of `JOURNAL.md` every session — Q1 and Q5 as a minimum, all five for a big session:
+1. What are you least confident about, and what would prove it right or wrong?
+2. What did you assume without stating it?
+3. What's the biggest thing being missed?
+4. What could've made this session more useful?
+5. What would you suggest to improve?
+
+### Marker conventions
+
+The load-bearing part of the whole system — what stops a fresh agent from undoing settled work:
+- **`(locked)`** — a settled decision, not to be reopened without being told to.
+- **"don't relitigate" / "already decided"** — same, for bigger architectural calls.
+- **"intentional, not a bug"** — negative-space documentation of what *not* to fix.
+- **Dead-ends recorded as dead-ends** — "tried X, got Y, rolled back" stops re-exploration of a ruled-out path.
+- **Embedded handoff prompt** — next session's kickoff written directly into PLAN at a clean stopping point; the highest-fidelity cold start available.
+
+### The phone-only write pattern
+
+The mechanical trick underneath Pattern 8 (and increasingly the default): give the agent a short-lived fine-grained PAT scoped to one repo, let it commit and push via the GitHub Contents API, and point a Cloudflare subdomain at the result — a webapp built and tested end-to-end without leaving the phone, including pasting screenshots in place of a file-save when the agent wants a directory it can't get. Worth being honest about the tradeoff: handing an LLM a PAT this way isn't ideal security practice, just a pragmatic one — paste, use, revoke, every session. (Mobile Codex/ChatGPT reportedly has a more native read/write GitHub integration; not yet evaluated here.)
+
+---
+
 ## Changelog
 
 | Date       | What was added                                                                                                     |
@@ -473,4 +513,6 @@ All writes during development — HTML edits, station data updates, icon commits
 | 2026-07-25 | Pattern 7: Cloudflare Worker as Full Backend Proxy + Scheduled Action Pipeline (deckhand)                            |
 | 2026-07-25 | Pattern 8: Static Broadcast App — Read-Only Runtime, Claude as Write Agent, Worker as Stream Proxy (radio/The Dial) |
 | 2026-07-25 | Added "A Note on How These Get Built: Session Continuity" — the agent-context-project-template workflow (AGENTS.md/PLAN.md/NOTES.md/JOURNAL.md) used across deckhand and radio                          |
+| 2026-07-25 | Reorganized: moved Hyde cross-reference to sit under Pattern 4; promoted the session-continuity note to a full "Development Workflow" section at the end (five files, optional `reference/`/grounding layer, session loop, debrief, marker conventions, phone-only PAT pattern), cross-linked from Pattern 8; sourced from [Solo Agent Context Kit](https://neely.github.io/agent-context-kit/) |
+| 2026-07-25 | Filled in missing link-outs: Pattern 6 examples now link the (private) kb-apps repo and kb-apps.benneely.com; Pattern 7 example now links deckhand.benneely.com                                     |
 
