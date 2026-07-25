@@ -396,6 +396,53 @@ An evolution of Patterns 3 and 4 that removes the PAT from the browser entirely.
 
 ---
 
+---
+
+### Pattern 8: Static Broadcast App — Read-Only Runtime, Claude as the Write Agent, Worker as Stream Proxy
+
+**What it is**
+A fully static, read-only web app where no user ever authenticates or writes anything at runtime. The entire codebase — HTML, CSS, JS, station data, and image assets — is committed once and served forever. A Cloudflare Worker handles a specific browser constraint (CORS on third-party audio streams) rather than auth or data routing. All writes during development were made directly by Claude via the GitHub Contents API using a short-lived fine-grained PAT, from a phone, with no laptop involved at any point.
+
+**How it works**
+One HTML file is the entire app. It contains all styles, logic, station data (as a JS array), and references to self-hosted logo assets in an `icons/` folder. There is no JSON database, no user-writable layer, no login, and no runtime write path of any kind. The app plays audio, tracks which station is active in memory, and reacts to user input — all transiently, all in the browser, nothing persisted.
+
+- **`index.html` (the whole app)** — a single file holding ~1150 lines: CSS custom properties for the color palette, a rotary drum tuner UI with orange needle and tick marks, a card grid for all 15 stations, vanilla JS for playback and accent color reactivity, and the full station roster as a JS array. Each station entry carries a name, frequency, stream URL, genre tags, city, accent color (pixel-sampled from the logo), logo path, donate URL, and two deferred-but-ready fields (`eyebrow`, `desc`) for a future detail view.
+- **`icons/` (self-hosted logos)** — 15 PNGs, one per station. Each was sourced from a screenshot (station website, Instagram, or app icon), pasted into the Claude chat on a phone, processed by Claude (center-crop → circular mask → 128×128px), and committed directly to the repo. Accent colors were pixel-sampled from each processed image and hardcoded into the station data array.
+- **The Cloudflare Worker (stream proxy)** — handles one specific browser constraint: some station stream URLs don't include CORS headers, which would block a browser from playing them directly. The Worker acts as a passthrough proxy, adding the necessary headers. It holds no secrets and performs no auth — it exists purely to satisfy the browser's CORS policy on audio streams.
+- **Stream verification** — every stream URL in the station data was verified before being committed. Sources: [deroverda/recommended-radio-streams](https://github.com/deroverda/recommended-radio-streams), each station's own site, or direct DevTools extraction. Stations without a confirmed public HTTPS-embeddable stream are held in a footer link-out section, not in the playable roster.
+- **No user auth, ever** — there is no PAT prompt, no login, no `localStorage`, no `sessionStorage`. The app is fully public and fully anonymous.
+
+**The development pattern**
+All writes during development — HTML edits, station data updates, icon commits, PLAN.md and NOTES.md maintenance — were made by Claude directly via the GitHub Contents API using a short-lived fine-grained PAT (scoped to Contents read/write on this repo only, pasted into chat, revoked after each session). The developer never opened a laptop. Testing happened on the same phone used to build it, at the live Cloudflare Pages URL, after every push. This made mobile layout issues immediately visible — tap target sizes, sticky header behavior, scroll behavior on station navigation — rather than discovered after the fact.
+
+**Examples**
+- [neely/radio](https://github.com/neely/radio) — "The Dial": a web radio tuner with 15 community, college, and public radio stations. Rotary drum navigation, real logos, pixel-sampled accent colors per station, donate links, responsive mobile layout. Live at [radio.benneely.com](https://radio.benneely.com). Built July 2026.
+
+**Constraints (beyond global)**
+- Repo is public — station data, accent colors, and all assets are visible to anyone. Appropriate for a broadcast-style app with no user data; not for anything sensitive.
+- The Cloudflare Worker is a real dependency for stations whose streams require CORS proxying — if the Worker goes down, those streams stop playing. Stations with native CORS headers play directly and are unaffected.
+- Fine-grained PAT used during development only, never at runtime. Treat each session's PAT as ephemeral — paste, use, revoke.
+- `icons/` assets are self-hosted PNGs. Logo rights belong to each station — appropriate for personal/fan use, not commercial redistribution.
+- Three stations (WUOG, WTUL, WXYC) use HTTP-only streams, blocked by the browser's mixed-content policy even through the Worker. Held in the footer as link-outs until a solution exists.
+
+**Limitations**
+- **No user state** — tuned station, volume, playback position reset on every page load. Intentional for a broadcast-style app; would need `localStorage` to add "resume where I left off."
+- **No swipe gesture on the drum** — arrow buttons only. Acceptable for the current roster size; natural candidate to add if the roster grows.
+- **Stream breakage is silent** — if a station changes its stream URL, the app plays nothing with no visible error beyond the status indicator on the card. No automated monitoring.
+- **Station roster is static** — adding a station requires a commit. No admin UI, no user suggestions surfaced in-app (routed to GitHub Issues instead).
+- **Accent colors are hardcoded** — pixel-sampled once at build time. If a station rebrands, the color has to be re-sampled manually.
+- **Two deferred data fields** (`eyebrow`, `desc`) are populated but not rendered — waiting on a UX reason to surface them (tooltip, expand, detail panel).
+
+**How it could be upgraded**
+- Add `localStorage` to remember the last-tuned station and restore it on load.
+- Add touch swipe handlers on the drum track for more natural mobile navigation.
+- Add a GitHub Action that periodically pings each stream URL and files an Issue if one goes dead — automated stream health monitoring.
+- Promote the three HTTP-only stations to the playable roster via a Worker that upgrades the stream to HTTPS in the proxy layer.
+- Surface the `eyebrow` and `desc` fields in a card expand or hover detail panel — the copy is already written and ready.
+- Add keyboard navigation (left/right arrows) to the drum tuner for desktop users.
+
+---
+
 ## Changelog
 
 | Date       | What was added                                                                                                     |
@@ -410,3 +457,5 @@ An evolution of Patterns 3 and 4 that removes the PAT from the browser entirely.
 | 2026-05-18 | Reorganized into tiers with intro and comparison table                                                               |
 | 2026-06-25 | Added Hyde cross-reference                                                                                           |
 | 2026-07-25 | Pattern 7: Cloudflare Worker as Full Backend Proxy + Scheduled Action Pipeline (deckhand)                            |
+| 2026-07-25 | Pattern 8: Static Broadcast App — Read-Only Runtime, Claude as Write Agent, Worker as Stream Proxy (radio/The Dial) |
+
