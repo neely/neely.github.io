@@ -46,6 +46,18 @@ Google Apps Script provides a real server-side execution environment — somethi
 
 ---
 
+## Available Templates
+
+Three of the patterns below have (or will have) a public, ready-to-fork template — no personal data, just the app code:
+
+| Template | Repo | Pattern | Status |
+| -------- | ---- | ------- | ------ |
+| Solo Agent Context Kit | [agent-context-project-template](https://github.com/neely/agent-context-project-template) | Development Workflow (below), not tied to one tier | Live |
+| Hiking Journal | [hiking-journal-template](https://github.com/neely/hiking-journal-template) | Pattern 3 | Live — ships with a demo entry and screenshots |
+| Kid-bank | — | Pattern 4 | Planned, not started |
+
+---
+
 ## A Note on How These Get Built
 
 The patterns above are snapshots of finished architectures. What they don't show is how each one actually gets built. That's a separate axis from *where data lives* — it's covered on its own in [Development Workflow](#development-workflow) at the end of this guide.
@@ -174,84 +186,83 @@ Also introduces a third-party JS dependency loaded from a CDN: [SortableJS](http
 ### Pattern 3: JAMstack — GitHub as Database + CDN + CI/CD
 
 **What it is**
-A multi-file static site where GitHub itself plays every backend role: the JSON data file is the database, the GitHub API is the write endpoint, GitHub Actions is the processing pipeline, and Cloudflare Pages is the CDN/host. The result is a fully phone-operable, publicly readable, write-protected app with real image processing — no server, no cloud account beyond GitHub and Cloudflare free tiers.
+A multi-file static site where GitHub itself plays every backend role: the JSON data file is the database, the GitHub API is the write endpoint, GitHub Actions is the processing pipeline, and Cloudflare Pages is the CDN/host. The result is a fully phone-operable app with real image processing — no server, no cloud account beyond GitHub and Cloudflare free tiers. Works equally well with a public or a private repo.
 
 **How it works**
 The app has two HTML pages and a clear separation of read vs. write:
 
-- **`index.html` (public reader)** — fetches `hikes.json` directly from `raw.githubusercontent.com` (no auth required, public repo). Renders entries as cards with swipeable photo galleries, stats, notes, and trail maps. A floating `+` button links to `add.html`.
-- **`add.html` (authenticated writer)** — handles creating and editing entries. On first use, a modal prompts for a GitHub Personal Access Token (PAT) with `repo` scope, which is stored in `localStorage`. All writes go through the GitHub Contents API (`api.github.com`) authenticated with that token. The PAT is never sent anywhere except directly to GitHub over HTTPS.
+- **`index.html` (reader)** — fetches `hikes.json` (and every image path) relative to its own domain — same-origin, served by whatever's hosting the page. No auth needed, and no dependency on the repo being public: Cloudflare Pages serves these files whether the source repo is public or private. Renders entries as cards with swipeable photo galleries, stats, notes, and trail maps. A floating `+` button links to `add.html`.
+- **`add.html` (authenticated writer)** — handles creating and editing entries. On first use, a modal prompts for a GitHub Personal Access Token (PAT) with `repo` scope, which is stored in `localStorage`. All writes go through the GitHub Contents API (`api.github.com`) authenticated with that token — this works identically regardless of repo visibility. The PAT is never sent anywhere except directly to GitHub over HTTPS.
 - **`hikes.json` (the database)** — a single JSON file committed to the repo. It is the entire data layer. Every hike is an entry in a top-level `hikes` array with a slug-based `id`, trail metadata, stats, notes, and paths to processed image assets.
-- **The image pipeline (GitHub Actions)** — uploading photos doesn't write them to their final location directly. `add.html` commits raw images to a `staging/{slug}/` folder, then updates `hikes.json` with the expected final asset paths. A GitHub Action (`process-images.yml`) triggers on any push touching `staging/`, runs Python/Pillow to resize images to 2000px long edge, convert to WebP (quality 75, method 6), apply EXIF rotation, strip metadata, compute aspect ratios, updates `hikes.json` with the ratios, and commits everything to `assets/images/{year}/{slug}/`. The browser then polls `raw.githubusercontent.com` waiting for the processed files to appear before redirecting to the journal.
-- **Hosting** — Cloudflare Pages connected to the GitHub repo. Every push auto-deploys. No build step — Cloudflare just serves the files. A custom domain is a CNAME record in Cloudflare DNS.
+- **The image pipeline (GitHub Actions)** — uploading photos doesn't write them to their final location directly. `add.html` commits raw images to a `staging/{slug}/` folder, then updates `hikes.json` with the expected final asset paths. A GitHub Action (`process-images.yml`) triggers on any push touching `staging/`, runs Python/Pillow to resize images to 2000px long edge, convert to WebP (quality 75, method 6), apply EXIF rotation, strip metadata, compute aspect ratios, updates `hikes.json` with the ratios, and commits everything to `assets/images/{year}/{slug}/`. The browser then polls the same domain (not GitHub directly) waiting for the processed files to appear before redirecting to the journal.
+- **Hosting** — Cloudflare Pages connected to the GitHub repo (works with a private repo via Cloudflare's own GitHub App install — unrelated to the public `raw.githubusercontent.com` CDN). Every push auto-deploys. No build step. A custom domain is a CNAME record in Cloudflare DNS.
+- **Optional: going private** — flip the repo private and put a Cloudflare Access application (email + one-time PIN) in front of the custom domain *and* the auto-provisioned `.pages.dev` fallback domain (easy to forget the second one — it's an open back door if left ungated). No code changes required; the app never depended on the repo being public in the first place once reads are same-origin. The only tradeoff is a short Pages-redeploy delay after saving a new hike (same delay exists in the public version too — it's inherent to same-origin reads, not to Access).
 
 **File structure**
 
 ```
 hiking-journal/
-├── index.html                        # Public journal reader
+├── index.html                        # Journal reader
 ├── add.html                          # Authenticated add/edit form
 ├── hikes.json                        # The entire database
+├── trail_icon.png                    # Hosted favicon / iOS home screen icon
 ├── assets/images/{year}/{slug}/      # Processed WebP photos + maps
 ├── staging/                          # Temporary upload area (cleared by Action)
 └── .github/workflows/process-images.yml
 ```
 
 **Examples**
-- [neely/hiking-journal](https://github.com/neely/hiking-journal) — "Neely Trails": a family hiking journal with photos, stats, trail maps, and notes. Add/edit from any phone with the PAT saved. Built ~April 14, 2026.
+- [neely/hiking-journal](https://github.com/neely/hiking-journal) — "Neely Trails": a family hiking journal with photos, stats, trail maps, and notes. Private repo, gated with Cloudflare Access. Built ~April 14, 2026.
+- [neely/hiking-journal-template](https://github.com/neely/hiking-journal-template) — the public, no-personal-data template. Ships with a demo entry (Hillary and Norgay's first ascent of Everest, 29 May 1953), README screenshots of the main page/expanded card/edit screen, and a documented optional "Going Private" walkthrough.
 
 **Constraints (beyond global)**
-- Repo must be **public** for `index.html` to read `hikes.json` from `raw.githubusercontent.com` without auth. A private journal would require routing reads through the authenticated API too.
 - The PAT has `repo` scope — full read/write to the repo. It's powerful; treat it like a password.
 - The PAT is stored in `localStorage` on each device. Not secure against someone with physical access to the browser, but never exposed publicly.
 - GitHub Actions is unlimited for public repos; private repos have a 2,000 minutes/month free tier. The image processing Action is lightweight — typically under 30 seconds per run.
-- Cloudflare Pages CDN introduces a small propagation delay between a GitHub commit and the file being visible at the custom domain. The browser polling loop in `add.html` accounts for this.
+- Cloudflare Pages introduces a small propagation delay between a GitHub commit and the file being visible at the custom domain — true whether the repo is public or private, since reads are always same-origin now. The browser polling loop in `add.html` accounts for this.
 - The concurrency block in the Action prevents race conditions when photos are uploaded in multiple bursts; a `git pull --rebase` at the start of the Action handles commit timing edge cases.
 
 **Limitations**
 - **Write latency** — saving a hike with photos takes 1–3 minutes: commit staging files one by one via API → commit `hikes.json` → wait for the Action (~30–60s) → poll for processed images.
 - **Single writer** — no conflict resolution. If two devices save simultaneously, the second commit will fail or overwrite the first.
-- **No real auth** — the PAT is all-or-nothing `repo` scope. No roles (viewer vs. editor), no per-user access.
+- **No real auth** — the PAT is all-or-nothing `repo` scope. No roles (viewer vs. editor), no per-user access. Cloudflare Access (if enabled) controls who can *reach* the site at all, but doesn't add roles within it.
 - **Deletion is incomplete** — deleting a hike removes it from `hikes.json` but leaves image files in `assets/images/`. The repo grows even if entries are deleted.
 - **GitHub as a database has limits** — the Contents API can't efficiently query or filter `hikes.json`. For hundreds of entries, parsing the whole file every page load becomes slow.
-- **No offline support** — reads require a network call to `raw.githubusercontent.com`. No service worker or caching layer.
+- **No offline support** — reads require a network call. No service worker or caching layer.
 
 **How it could be upgraded**
 - Add a `manifest.json` and service worker to make it a full PWA with offline reading.
 - Split `hikes.json` into per-year files or a file-per-hike to reduce payload as the journal grows.
 - Add drag-to-reorder on the photo upload list so hero shot selection is explicit.
-- Route reads through the authenticated API (and make the repo private) for a truly private journal.
 - Replace the PAT with GitHub OAuth (via a small Cloudflare Worker) to avoid storing a powerful token in `localStorage`.
-- Add a Cloudflare Worker as a thin write proxy to hide the PAT entirely from the browser.
+- Add a Cloudflare Worker as a thin proxy for both reads and writes to hide the PAT entirely from the browser and eliminate the Pages-redeploy delay — real infrastructure to maintain in exchange for convenience, not meaningfully more security once the repo is already private and Access-gated.
 
 ---
 
 ### Pattern 4: GitHub as Database — Multi-Audience, PAT-Gated Write, No Pipeline
 
 **What it is**
-A refinement of Pattern 3, stripped of the image processing pipeline and optimized for a two-audience app: a fully public read-only view for one group (kids) and a PAT-gated admin interface for another (parents). Key evolutions over Pattern 3: `sessionStorage`-only PAT handling, fine-grained PAT scoping, and optimistic UI updates that bypass CDN propagation delay.
+A refinement of Pattern 3, stripped of the image processing pipeline and optimized for a two-audience app: a read-only view for one group (kids) and a PAT-gated admin interface for another (parents). Key evolutions over Pattern 3: `sessionStorage`-only PAT handling, fine-grained PAT scoping, and optimistic UI updates that bypass CDN propagation delay. Currently running private, behind Cloudflare Access.
 
 **How it works**
 Two HTML files, two JSON files, one GitHub repo:
 
-- **`index.html` (kid dashboard)** — fetches `ledger.json` and `investments.json` directly from `raw.githubusercontent.com` (no auth, public repo). Computes balances on the fly by walking transactions sorted by date then sequence number — balances are never stored, always derived. Shows per-kid cards, transaction history with relative dates ("3 days ago"), date range filters, and live search. Designed to be bookmarked by kids.
-- **`bank.html` (parent admin)** — on every new browser session, a fullscreen prompt requires a GitHub PAT before anything renders. The token is validated against the GitHub API before the app loads. Stored in `sessionStorage` only — clears when the tab closes, never persists to `localStorage`. Add, edit, and delete transactions via bottom sheets. Update investment balances. All writes use the GitHub Contents API (fetch current SHA → patch in-memory ledger → PUT back). The UI updates immediately from memory rather than re-fetching from the CDN, which sidesteps propagation delay entirely.
+- **`index.html` (kid dashboard)** — fetches `ledger.json` and `investments.json` relative to its own domain — same-origin, no auth needed, no dependency on the repo being public. Computes balances on the fly by walking transactions sorted by date then sequence number — balances are never stored, always derived. Shows per-kid cards, transaction history with relative dates ("3 days ago"), date range filters, and live search. Designed to be bookmarked by kids.
+- **`bank.html` (parent admin)** — on every new browser session, a fullscreen prompt requires a GitHub PAT before anything renders. The token is validated against the GitHub API before the app loads. Stored in `sessionStorage` only — clears when the tab closes, never persists to `localStorage`. Add, edit, and delete transactions via bottom sheets. Update investment balances. All writes use the GitHub Contents API (fetch current SHA → patch in-memory ledger → PUT back) — this already worked identically on a private repo, since it was never a public/anonymous read to begin with. The UI updates immediately from memory rather than re-fetching from the CDN, which sidesteps propagation delay entirely.
 - **`ledger.json`** — a flat array of all transactions for all kids. Balances are computed at runtime, never stored. Git commit history is the audit log — every write creates a descriptive commit (`Add transaction for Adam`, `Delete transaction adam-1 for William`).
 - **`investments.json`** — a separate flat array for investment account balances (SPY, Roth IRA, etc.) tracked alongside but excluded from spendable balance.
-- **Hosting** — Cloudflare Pages + custom domain via CNAME at the domain registrar. No build step.
+- **Hosting** — Cloudflare Pages + custom domain via CNAME at the domain registrar. No build step. Repo is private; both the custom domain and the `.pages.dev` fallback are gated with Cloudflare Access (email + one-time PIN).
 
 **Examples**
-- [neely/kid-bank](https://github.com/neely/kid-bank) — "Neely Bank": a family banking ledger for tracking kids' allowances, spending, and investments. Two kids, two audiences, one JSON file. Built 2026.
+- [neely/kid-bank](https://github.com/neely/kid-bank) — "Neely Bank": a family banking ledger for tracking kids' allowances, spending, and investments. Two kids, two audiences, one JSON file. Built 2026. Private repo, gated with Cloudflare Access on both domains.
 
 **Constraints (beyond global)**
-- Repo must be public for `index.html` to read without auth.
 - Fine-grained PAT scoped to Contents read/write only — meaningfully tighter than the broad `repo`-scope PAT in Pattern 3.
 - `sessionStorage` only for the PAT — clears when the tab closes. On a phone, Face ID or device passcode protects the saved keychain entry.
 - No GitHub Action — writes go directly to the final JSON files, so there's no staging step or propagation delay to wait out on the write side.
-- Cloudflare CDN propagation delay still exists for the public `index.html` view, but the admin `bank.html` updates its UI from memory immediately.
+- Cloudflare CDN propagation delay still exists for the `index.html` view (same-origin read, same as Pattern 3), but the admin `bank.html` updates its UI from memory immediately.
 
 **Limitations**
-- **Public data** — `ledger.json` and `investments.json` are readable by anyone who finds the raw GitHub URL. Acceptable for a family fun ledger; not for anything sensitive.
 - **Single writer** — no conflict resolution if two sessions write simultaneously.
 - **No real audit trail UI** — Git history is the audit log, but there's no in-app way to view or search it.
 - **Data grows without pruning** — `ledger.json` accumulates every transaction forever.
@@ -264,7 +275,7 @@ Two HTML files, two JSON files, one GitHub repo:
 - Pull live investment prices from a public market data API and auto-update `investments.json` via GitHub Actions.
 - Archive old transactions to a `ledger-archive.json` annually, keeping the active file small.
 - Add a `manifest.json` and service worker to cache `index.html` and the last-fetched ledger for offline reading.
-- Make the repo private and route all reads through the authenticated API.
+- A public, no-personal-data template for this pattern (mirroring `hiking-journal-template`) is planned but not started.
 
 > **Where Hyde fits:** [Hyde](https://github.com/neely/hyde) — the Jekyll post composer covered in [this post](/Building-a-Mobile-First-Post-Composer-for-Jekyll/), live on [neely.github.io](https://neely.github.io) — is a close cousin of this pattern: GitHub as database, fine-grained PAT-gated write, no processing pipeline. The difference is what's being written (Markdown posts and front matter instead of JSON ledger rows), but the mechanics — Contents API, SHA-based updates, no server — are the same shape.
 
@@ -515,4 +526,5 @@ The mechanical trick underneath Pattern 8 (and increasingly the default): give t
 | 2026-07-25 | Added "A Note on How These Get Built: Session Continuity" — the agent-context-project-template workflow (AGENTS.md/PLAN.md/NOTES.md/JOURNAL.md) used across deckhand and radio                          |
 | 2026-07-25 | Reorganized: moved Hyde cross-reference to sit under Pattern 4; promoted the session-continuity note to a full "Development Workflow" section at the end (five files, optional `reference/`/grounding layer, session loop, debrief, marker conventions, phone-only PAT pattern), cross-linked from Pattern 8; sourced from [Solo Agent Context Kit](https://neely.github.io/agent-context-kit/) |
 | 2026-07-25 | Filled in missing link-outs: Pattern 6 examples now link the (private) kb-apps repo and kb-apps.benneely.com; Pattern 7 example now links deckhand.benneely.com                                     |
+| 2026-07-26 | Rewrote Patterns 3 and 4: both no longer require a public repo for reads — `index.html` in each now reads relative to its own domain instead of `raw.githubusercontent.com`. Added "Available Templates" section (agent-context-project-template, hiking-journal-template; kid-bank template planned). Pattern 3 now documents the optional "Going Private" Cloudflare Access setup and links the public hiking-journal-template. Pattern 4 updated to reflect kid-bank now running private + gated. |
 
