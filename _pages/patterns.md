@@ -111,7 +111,41 @@ If none of the "possibilities" above actually apply yet, staying bundled is the 
 
 ---
 
+## What Splitting CSS/JS Out of Inline HTML Unlocks
 
+Most apps in this guide start as genuinely single-file HTML — inline `<style>` and `<script>`, everything in one place, easy to reason about for a small app. [hiking-journal](https://github.com/neely/hiking-journal) split its CSS/JS into external files in July 2026 once the reader/writer pages had enough duplicated design tokens and helper functions to be worth sharing (see the [How It Works](https://github.com/neely/hiking-journal#how-it-works) section there for the actual before/after). That split doesn't add capability by itself, but it removes friction that was making some things annoying enough to skip. Worth revisiting once an app has crossed that line:
+
+**Near-zero-effort once split**
+- **View Transitions** — `@view-transition { navigation: auto; }` in the shared stylesheet gets a native cross-fade between pages instead of a hard reload. The best "feels like an app" upgrade for the least code, and awkward to reason about correctly when styles were duplicated across multiple inline blocks.
+- **Dark mode** — a `prefers-color-scheme` media query in the shared stylesheet, remapping existing design tokens. One place to update instead of every page's inline block staying in sync manually.
+- **Print stylesheet** — a `@media print` block hiding chrome (buttons, nav) for anything meant to be printed or saved as PDF.
+- **Shared loading/skeleton states** — once there's a shared stylesheet, a skeleton shimmer while data fetches is a small, one-place addition that benefits every page using it.
+
+**Real new capabilities, still fully serverless**
+- **A service worker (`sw.js`)** — needs addressable JS to register from. Unlocks: instant offline app-shell loading, cached assets, a real installable PWA rather than an imitation bookmark icon.
+- **`manifest.json`** — pairs with the service worker to make "Add to Home Screen" produce an actual installed PWA (standalone window, proper icon behavior) instead of a Safari bookmark shortcut.
+- **Web Share API** (`navigator.share()`) — native share-sheet integration from a card or entry, cleaner as addressable JS than buried in inline `onclick` handlers.
+- **IndexedDB as an offline write queue** — for apps where writes might happen with no signal (e.g. logging something mid-trail), a small dedicated file can queue a write locally and flush it once back online. This is the one item here that's a genuine feature rather than polish — worth its own design pass before building, since it touches save/error-handling flow directly.
+- **`robots.txt`** — trivial, but worth setting per-repo once files are addressable rather than baked into a single blob: `Disallow: /` for anything gated by Access (belt-and-suspenders past the actual gate), left open for anything meant to be public (like a template repo).
+
+**Repo inventory — split vs. still inline (as of 2026-07-30):**
+
+| Repo | Status |
+|---|---|
+| hiking-journal | Split — `style.css`, `year-palette.js`, `index.css`/`index.js`, `add.css`/`add.js` |
+| deckhand | Split — `style.css`, `app.js` |
+| recipes | Split — `style.css`, `recipe-engine.js`, `recipes.js` |
+| radio | Inline — single `index.html` |
+| kid-bank | Inline — `index.html`, `bank.html` |
+| strikemap | Inline — `index.html`, `desktop.html` |
+| kb-apps | Partially split — shared `kb-lib.js` exists, but no shared stylesheet; each of the nine tool pages still carries its own inline `<style>` |
+| hiking-journal-template | Inline, deliberately — a fresh fork doesn't yet have the duplication that would justify splitting |
+
+kb-apps is the most interesting candidate for a full split next — nine pages sharing one `kb-lib.js` already proves the JS side is worth sharing; a `style.css` covering the shared kettlebell-app design system would likely find the same kind of duplicated tokens hiking-journal had, and dark mode or View Transitions would benefit all nine pages at once rather than needing to be added nine times.
+
+---
+
+## Pattern Template
 
 ```
 ### Pattern N: [Name]
@@ -567,4 +601,7 @@ The mechanical trick underneath Pattern 8 (and increasingly the default): give t
 | 2026-07-25 | Filled in missing link-outs: Pattern 6 examples now link the (private) kb-apps repo and kb-apps.benneely.com; Pattern 7 example now links deckhand.benneely.com                                     |
 | 2026-07-26 | Rewrote Patterns 3 and 4: both no longer require a public repo for reads — `index.html` in each now reads relative to its own domain instead of `raw.githubusercontent.com`. Added "Available Templates" section (agent-context-project-template, hiking-journal-template; kid-bank template planned). Pattern 3 now documents the optional "Going Private" Cloudflare Access setup and links the public hiking-journal-template. Pattern 4 updated to reflect kid-bank now running private + gated. |
 | 2026-07-30 | Pattern 3 updated: the live hiking-journal instance moved its write path off browser-`localStorage` PAT onto a Cloudflare Worker secret (Pattern 7's shape) — added [neely/hiking-journal-proxy](https://github.com/neely/hiking-journal-proxy), updated constraints/upgrade-ideas/file structure accordingly. Template repo unchanged, still uses the simpler browser-PAT version. |
+| 2026-07-30 | Added "When to Graduate an App to Its Own Repo" — security/infrastructure/organizational/collaboration possibilities that unlock once a bundled sub-app (e.g. kb-apps' nine tools) splits into its own repo, using hiking-journal-proxy and hiking-journal-template as before/after examples. Includes a counter-note on when not to split. |
+| 2026-07-30 | Fixed Global Constraints table — it previously claimed no server-side code, no backend, and no real secrets across all patterns, no longer true since Patterns 7-8. Added inline exceptions per row rather than rewriting the table. |
+| 2026-07-30 | Added "What Splitting CSS/JS Out of Inline HTML Unlocks" — near-zero-effort wins (View Transitions, dark mode, print stylesheet) vs. genuine new capabilities (service worker, manifest.json/PWA install, Web Share, IndexedDB offline queue), plus a repo inventory of split vs. still-inline apps. kb-apps flagged as the next likely candidate — already has a shared `kb-lib.js` but no shared stylesheet. |
 
