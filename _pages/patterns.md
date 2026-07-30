@@ -192,7 +192,7 @@ A multi-file static site where GitHub itself plays every backend role: the JSON 
 The app has two HTML pages and a clear separation of read vs. write:
 
 - **`index.html` (reader)** — fetches `hikes.json` (and every image path) relative to its own domain — same-origin, served by whatever's hosting the page. No auth needed, and no dependency on the repo being public: Cloudflare Pages serves these files whether the source repo is public or private. Renders entries as cards with swipeable photo galleries, stats, notes, and trail maps. A floating `+` button links to `add.html`.
-- **`add.html` (authenticated writer)** — handles creating and editing entries. On first use, a modal prompts for a GitHub Personal Access Token (PAT) with `repo` scope, which is stored in `localStorage`. All writes go through the GitHub Contents API (`api.github.com`) authenticated with that token — this works identically regardless of repo visibility. The PAT is never sent anywhere except directly to GitHub over HTTPS.
+- **`add.html` (authenticated writer)** — handles creating and editing entries. The base version of this pattern stores a GitHub Personal Access Token (PAT) in `localStorage`, entered via a modal on first use, and writes go straight from the browser to `api.github.com`. The live instance ([neely/hiking-journal](https://github.com/neely/hiking-journal)) has since evolved past that: writes now go to `/api/contents/*` on the same domain, proxied by a small Cloudflare Worker ([neely/hiking-journal-proxy](https://github.com/neely/hiking-journal-proxy)) that holds the PAT as a server-side secret — see Pattern 7 for the general shape of that proxy. `add.html` itself never handles a credential at all anymore; Cloudflare Access (already gating the domain) is the only thing standing between a family member and the write path. The template repo still ships the simpler browser-PAT version, since it doesn't assume Access is set up.
 - **`hikes.json` (the database)** — a single JSON file committed to the repo. It is the entire data layer. Every hike is an entry in a top-level `hikes` array with a slug-based `id`, trail metadata, stats, notes, and paths to processed image assets.
 - **The image pipeline (GitHub Actions)** — uploading photos doesn't write them to their final location directly. `add.html` commits raw images to a `staging/{slug}/` folder, then updates `hikes.json` with the expected final asset paths. A GitHub Action (`process-images.yml`) triggers on any push touching `staging/`, runs Python/Pillow to resize images to 2000px long edge, convert to WebP (quality 75, method 6), apply EXIF rotation, strip metadata, compute aspect ratios, updates `hikes.json` with the ratios, and commits everything to `assets/images/{year}/{slug}/`. The browser then polls the same domain (not GitHub directly) waiting for the processed files to appear before redirecting to the journal.
 - **Hosting** — Cloudflare Pages connected to the GitHub repo (works with a private repo via Cloudflare's own GitHub App install — unrelated to the public `raw.githubusercontent.com` CDN). Every push auto-deploys. No build step. A custom domain is a CNAME record in Cloudflare DNS.
@@ -203,7 +203,11 @@ The app has two HTML pages and a clear separation of read vs. write:
 ```
 hiking-journal/
 ├── index.html                        # Journal reader
+├── index.css / index.js              # Reader-specific styles/script
 ├── add.html                          # Authenticated add/edit form
+├── add.css / add.js                  # Writer-specific styles/script
+├── style.css                         # Shared design tokens + reset
+├── year-palette.js                   # Shared year-color palette + lookup fn
 ├── hikes.json                        # The entire database
 ├── trail_icon.png                    # Hosted favicon / iOS home screen icon
 ├── assets/images/{year}/{slug}/      # Processed WebP photos + maps
@@ -211,13 +215,16 @@ hiking-journal/
 └── .github/workflows/process-images.yml
 ```
 
+The reader/writer pages started as single self-contained HTML files (inline `<style>`/`<script>`) and were later split into external CSS/JS once the two pages accumulated enough duplicated design tokens and helper functions to be worth sharing — this is optional per-project; the template still ships inline for simplicity, since a fresh fork doesn't yet have the duplication that justifies splitting.
+
 **Examples**
-- [neely/hiking-journal](https://github.com/neely/hiking-journal) — "Neely Trails": a family hiking journal with photos, stats, trail maps, and notes. Private repo, gated with Cloudflare Access. Built ~April 14, 2026.
-- [neely/hiking-journal-template](https://github.com/neely/hiking-journal-template) — the public, no-personal-data template. Ships with a demo entry (Hillary and Norgay's first ascent of Everest, 29 May 1953), README screenshots of the main page/expanded card/edit screen, and a documented optional "Going Private" walkthrough.
+- [neely/hiking-journal](https://github.com/neely/hiking-journal) — "Neely Trails": a family hiking journal with photos, stats, trail maps, and notes. Private repo, gated with Cloudflare Access. Built ~April 14, 2026. Writes moved to a Worker-proxied PAT (below) and CSS/JS split out of inline blocks, July 2026.
+- [neely/hiking-journal-proxy](https://github.com/neely/hiking-journal-proxy) — the Cloudflare Worker holding the PAT server-side for the above. See Pattern 7 for the general shape.
+- [neely/hiking-journal-template](https://github.com/neely/hiking-journal-template) — the public, no-personal-data template. Ships with a demo entry (Hillary and Norgay's first ascent of Everest, 29 May 1953), README screenshots of the main page/expanded card/edit screen, and a documented optional "Going Private" walkthrough. Still uses the simpler browser-PAT write path described above, not the Worker proxy.
 
 **Constraints (beyond global)**
-- The PAT has `repo` scope — full read/write to the repo. It's powerful; treat it like a password.
-- The PAT is stored in `localStorage` on each device. Not secure against someone with physical access to the browser, but never exposed publicly.
+- The base pattern's PAT has `repo` scope — full read/write to the repo. It's powerful; treat it like a password. (The live instance uses a fine-grained, Contents-only PAT instead, held server-side — see below.)
+- In the base pattern, the PAT is stored in `localStorage` on each device — not secure against someone with physical access to the browser, but never exposed publicly. The live instance eliminates this entirely by moving the PAT into a Cloudflare Worker secret (Pattern 7's shape); the browser never holds a credential.
 - GitHub Actions is unlimited for public repos; private repos have a 2,000 minutes/month free tier. The image processing Action is lightweight — typically under 30 seconds per run.
 - Cloudflare Pages introduces a small propagation delay between a GitHub commit and the file being visible at the custom domain — true whether the repo is public or private, since reads are always same-origin now. The browser polling loop in `add.html` accounts for this.
 - The concurrency block in the Action prevents race conditions when photos are uploaded in multiple bursts; a `git pull --rebase` at the start of the Action handles commit timing edge cases.
@@ -234,8 +241,7 @@ hiking-journal/
 - Add a `manifest.json` and service worker to make it a full PWA with offline reading.
 - Split `hikes.json` into per-year files or a file-per-hike to reduce payload as the journal grows.
 - Add drag-to-reorder on the photo upload list so hero shot selection is explicit.
-- Replace the PAT with GitHub OAuth (via a small Cloudflare Worker) to avoid storing a powerful token in `localStorage`.
-- Add a Cloudflare Worker as a thin proxy for both reads and writes to hide the PAT entirely from the browser and eliminate the Pages-redeploy delay — real infrastructure to maintain in exchange for convenience, not meaningfully more security once the repo is already private and Access-gated.
+- ~~Add a Cloudflare Worker as a thin proxy for both reads and writes to hide the PAT entirely from the browser~~ — done, July 2026, on the live instance ([neely/hiking-journal-proxy](https://github.com/neely/hiking-journal-proxy)). Worth being honest that this was mainly a convenience/tidiness win, not a material security jump — the repo was already private and the domain already Access-gated before this, so the PAT's browser exposure was already low-consequence. Only worth doing when the app is already Access-gated so a Worker's Route can piggyback on the existing Access application without extra setup.
 
 ---
 
@@ -527,4 +533,5 @@ The mechanical trick underneath Pattern 8 (and increasingly the default): give t
 | 2026-07-25 | Reorganized: moved Hyde cross-reference to sit under Pattern 4; promoted the session-continuity note to a full "Development Workflow" section at the end (five files, optional `reference/`/grounding layer, session loop, debrief, marker conventions, phone-only PAT pattern), cross-linked from Pattern 8; sourced from [Solo Agent Context Kit](https://neely.github.io/agent-context-kit/) |
 | 2026-07-25 | Filled in missing link-outs: Pattern 6 examples now link the (private) kb-apps repo and kb-apps.benneely.com; Pattern 7 example now links deckhand.benneely.com                                     |
 | 2026-07-26 | Rewrote Patterns 3 and 4: both no longer require a public repo for reads — `index.html` in each now reads relative to its own domain instead of `raw.githubusercontent.com`. Added "Available Templates" section (agent-context-project-template, hiking-journal-template; kid-bank template planned). Pattern 3 now documents the optional "Going Private" Cloudflare Access setup and links the public hiking-journal-template. Pattern 4 updated to reflect kid-bank now running private + gated. |
+| 2026-07-30 | Pattern 3 updated: the live hiking-journal instance moved its write path off browser-`localStorage` PAT onto a Cloudflare Worker secret (Pattern 7's shape) — added [neely/hiking-journal-proxy](https://github.com/neely/hiking-journal-proxy), updated constraints/upgrade-ideas/file structure accordingly. Template repo unchanged, still uses the simpler browser-PAT version. |
 
