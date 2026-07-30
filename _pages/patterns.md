@@ -103,6 +103,9 @@ Splitting an app out into its own repo isn't just organizational tidiness once i
 - Forkability — this is literally how [hiking-journal-template](https://github.com/neely/hiking-journal-template) happened. A bundled app can't be cleanly forked without dragging in unrelated siblings.
 - Room to add a collaborator on exactly one app without exposing anything else in the bundle.
 
+**Once you've decided to graduate**
+A newly split repo starts from zero — no history, no scaffolding. That's the right moment to set it up with the [Solo Agent Context Kit](https://neely.github.io/agent-context-kit/) (AGENTS.md/PLAN.md/NOTES.md/JOURNAL.md — see [Development Workflow](#development-workflow) below) from the first session, rather than bolting it on after the fact once there's already history to reconcile. deckhand and radio both started this way from session one; retrofitting it onto an app with existing history is more friction than it's worth.
+
 **Signs it's not worth it yet**
 - The app has no backend logic of its own and shares the exact same Access policy as its siblings — splitting adds repo-management overhead with no new capability unlocked.
 - Nobody outside this bundle would ever want to fork or reuse just this one piece.
@@ -138,10 +141,10 @@ Most apps in this guide start as genuinely single-file HTML — inline `<style>`
 | radio | Inline — single `index.html` |
 | kid-bank | Inline — `index.html`, `bank.html` |
 | strikemap | Inline — `index.html`, `desktop.html` |
-| kb-apps | Partially split — shared `kb-lib.js` exists, but no shared stylesheet; each of the nine tool pages still carries its own inline `<style>` |
+| kb-apps | Inline by design — `kb-lib.js` is shared, but it's a template library for building new tools in the bundle, not duplication debt to clean up. Leave as-is. |
 | hiking-journal-template | Inline, deliberately — a fresh fork doesn't yet have the duplication that would justify splitting |
 
-kb-apps is the most interesting candidate for a full split next — nine pages sharing one `kb-lib.js` already proves the JS side is worth sharing; a `style.css` covering the shared kettlebell-app design system would likely find the same kind of duplicated tokens hiking-journal had, and dark mode or View Transitions would benefit all nine pages at once rather than needing to be added nine times.
+Not every repo in this list needs to change — it's here to make the option visible, not to imply a backlog.
 
 ---
 
@@ -604,4 +607,5 @@ The mechanical trick underneath Pattern 8 (and increasingly the default): give t
 | 2026-07-30 | Added "When to Graduate an App to Its Own Repo" — security/infrastructure/organizational/collaboration possibilities that unlock once a bundled sub-app (e.g. kb-apps' nine tools) splits into its own repo, using hiking-journal-proxy and hiking-journal-template as before/after examples. Includes a counter-note on when not to split. |
 | 2026-07-30 | Fixed Global Constraints table — it previously claimed no server-side code, no backend, and no real secrets across all patterns, no longer true since Patterns 7-8. Added inline exceptions per row rather than rewriting the table. |
 | 2026-07-30 | Added "What Splitting CSS/JS Out of Inline HTML Unlocks" — near-zero-effort wins (View Transitions, dark mode, print stylesheet) vs. genuine new capabilities (service worker, manifest.json/PWA install, Web Share, IndexedDB offline queue), plus a repo inventory of split vs. still-inline apps. kb-apps flagged as the next likely candidate — already has a shared `kb-lib.js` but no shared stylesheet. |
+| 2026-07-30 | Corrected the kb-apps note above — `kb-lib.js` is deliberate template infrastructure for building new tools in the bundle, not organic duplication debt; removed the "next candidate" framing. Also cross-linked the Solo Agent Context Kit into "When to Graduate an App to Its Own Repo" — a freshly split repo is the right moment to scaffold it, not after the fact. |
 
