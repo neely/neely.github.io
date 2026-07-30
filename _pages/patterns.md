@@ -78,7 +78,40 @@ These apply to **all patterns** in this guide unless noted otherwise:
 
 ---
 
-## Pattern Template
+## When to Graduate an App to Its Own Repo
+
+Several patterns above (especially Tier 1) start life bundled — one repo, one Cloudflare Pages project, several small tools or pages sharing infrastructure. [kb-apps](https://github.com/neely/kb-apps) is the clearest example: nine kettlebell workout apps under one repo, one domain, one Access gate. Bundling is the right starting point — less setup, one place to look, no decision to make yet about whether a given tool deserves its own everything.
+
+Splitting an app out into its own repo isn't just organizational tidiness once it happens — it unlocks things that are structurally unavailable while bundled. Worth checking against this list before deciding whether something's ready to graduate:
+
+**Security**
+- A dedicated Cloudflare Access policy, instead of one policy covering everything in the bundle whether it needs that level of protection or not.
+- A PAT or Worker secret scoped to exactly this repo — bundled, any write-access token touches every sibling app too.
+- A security posture that's a single clean fact ("private, gated") instead of "well, most of it is fine but one tool in here handles something sensitive."
+
+**Infrastructure**
+- Its own Cloudflare Worker — dedicated backend logic, own secrets, own rate limits (see [Pattern 7](#pattern-7-cloudflare-worker-as-full-backend-proxy--scheduled-action-pipeline) and [hiking-journal-proxy](https://github.com/neely/hiking-journal-proxy)).
+- Its own GitHub Action — no need for path-based `on: push: paths:` triggers to avoid firing on unrelated sibling changes; every push in the repo is relevant by default.
+- Independent deploy cadence — Cloudflare Pages ties 1:1 to a repo, so a bundled typo risks redeploying (and briefly breaking) everything in the bundle, not just the one app being changed.
+- Preview deploys that mean something — a branch preview shows just this app's changes, not a diff across an unrelated bundle.
+
+**Organizational**
+- A README that's actually about one thing — see the [hiking-journal](https://github.com/neely/hiking-journal) rewrite, which replaced a doc trying to describe a moving multi-piece system with one that describes exactly what's there now.
+- Issues and repo metadata (topics, description, `is_template`) that mean something at the app level instead of the bundle level.
+
+**Collaboration & sharing**
+- Forkability — this is literally how [hiking-journal-template](https://github.com/neely/hiking-journal-template) happened. A bundled app can't be cleanly forked without dragging in unrelated siblings.
+- Room to add a collaborator on exactly one app without exposing anything else in the bundle.
+
+**Signs it's not worth it yet**
+- The app has no backend logic of its own and shares the exact same Access policy as its siblings — splitting adds repo-management overhead with no new capability unlocked.
+- Nobody outside this bundle would ever want to fork or reuse just this one piece.
+
+If none of the "possibilities" above actually apply yet, staying bundled is the simpler and correct choice — this isn't a call to fragment every small tool into its own repo preemptively, only to split when one of these becomes a real, current need.
+
+---
+
+
 
 ```
 ### Pattern N: [Name]
