@@ -66,15 +66,15 @@ The patterns above are snapshots of finished architectures. What they don't show
 
 ## Global Constraints
 
-These apply to **all patterns** in this guide unless noted otherwise:
+These apply to **Tiers 1–2's static-only patterns** (Patterns 1–6). Patterns 7 and 8 introduce a Cloudflare Worker and are the exception — noted in the right column:
 
 | Constraint                  | Detail                                                                                            |
 | ---------------------------- | --------------------------------------------------------------------------------------------------- |
-| **Hosting**                  | GitHub Pages or Cloudflare Pages (static files only — no server-side code execution on the host)   |
-| **No traditional backend**   | No Node/Python/etc. server, no managed database, no API keys hidden server-side                    |
-| **No built-in auth**         | No login system unless bolted on via a third-party service                                          |
+| **Hosting**                  | GitHub Pages or Cloudflare Pages (static files only — no server-side code execution on the host). **Exception: Patterns 7–8** add a Cloudflare Worker alongside Pages — real server-side compute, just on a separate piece of infrastructure from the static host. |
+| **No traditional backend**   | No Node/Python/etc. server, no managed database, no API keys hidden server-side. **Exception: Patterns 7–8** — the Worker *is* a minimal backend, purpose-built to hold exactly one thing server-side (a secret) rather than running general application logic. |
+| **No built-in auth**         | No login system unless bolted on via a third-party service (Cloudflare Access, used throughout this guide, counts as bolted-on, not built-in)                                          |
 | **HTTPS only**               | Pages hosting serves over HTTPS — mixed-content HTTP calls will be blocked                          |
-| **Secrets**                  | Any API key or token in a GitHub repo or HTML file is visible — treat all as public                 |
+| **Secrets**                  | Any API key or token in a GitHub repo or HTML file is visible — treat all as public. **Exception: Patterns 7–8** — a secret set as a Cloudflare Worker environment variable is genuinely private; it lives in Cloudflare's infrastructure, never in the repo or the browser. This is the whole point of those two patterns. |
 
 ---
 
