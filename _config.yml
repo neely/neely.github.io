@@ -18,7 +18,7 @@ avatar: /images/circle-cropped.jpg
 # set their own `image:` in front matter. Deliberately left unset — falling
 # back to `avatar` above meant every shared link showed a big headshot.
 # Set this to a proper banner/logo image once one exists, e.g.:
-# social_image: /images/social-default.png
+social_image: /images/social-default.jpg
 
 
 #
