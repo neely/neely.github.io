@@ -19,7 +19,10 @@
 {% if page.image %}
 <meta property="og:image" content="{{ site.url }}{{ page.image }}"/>
 <meta property="twitter:image" content="{{ site.url }}{{ page.image }}"/>
-{% else %}
-<meta property="og:image" content="{{ site.url }}{{ site.avatar }}"/>
-<meta property="twitter:image" content="{{ site.url }}{{ site.avatar }}"/>
+{% elsif site.social_image %}
+<meta property="og:image" content="{{ site.url }}{{ site.social_image }}"/>
+<meta property="twitter:image" content="{{ site.url }}{{ site.social_image }}"/>
 {% endif %}
+<!-- No image tag emitted if neither is set — most platforms handle a missing
+     og:image gracefully (title/description only), which beats defaulting to
+     site.avatar (the small header headshot) blown up huge in a share preview. -->
