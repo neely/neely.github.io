@@ -528,6 +528,76 @@ All writes during development — HTML edits, station data updates, icon commits
 - Surface the `eyebrow` and `desc` fields in a card expand or hover detail panel — the copy is already written and ready.
 - Add keyboard navigation (left/right arrows) to the drum tuner for desktop users.
 
+### Pattern 9: Cloudflare Worker Deployed via GitHub Actions — Phone-Only CI/CD
+
+**What it is**
+A Cloudflare Worker whose deploy step runs in GitHub Actions rather than
+locally via `wrangler` or through Cloudflare's own git-integration
+auto-build. The distinguishing feature is the deploy *mechanism*, not the
+runtime architecture — this pairs naturally with Pattern 7 (Worker as
+backend), but the CI layer is what makes deploys possible with zero laptop
+and zero local `wrangler` install at any point, matching the phone-only
+development pattern (see Development Workflow below) all the way through
+to shipping.
+
+**How it works**
+`wrangler.toml` is checked into the repo, but only its non-secret fields
+(`name`, `main`, `compatibility_date`) — account ID and any Worker secrets
+never live in that file. A `.github/workflows/deploy.yml` runs
+`cloudflare/wrangler-action`, authenticated via a Cloudflare API token
+scoped to Workers Scripts (Cloudflare's own "Edit Cloudflare Workers"
+token template — broader than the bare minimum, but a maintained official
+template beats hand-trimming permissions on a phone screen), stored as a
+`CLOUDFLARE_API_TOKEN` repo secret alongside `CLOUDFLARE_ACCOUNT_ID`. The
+trigger is `workflow_dispatch` (a manual tap in the GitHub app/mobile web),
+not `push` — deliberately, since this pairs with the no-branches,
+commit-straight-to-main habit (see Development Workflow), and a
+push-triggered deploy would mean every commit ships immediately with no
+gate. `workflow_dispatch` keeps one deliberate "ship it" moment while still
+requiring nothing local.
+
+**Examples**
+- [neely/creel](https://github.com/neely/creel) — send-article-to-Kindle
+  pipeline. First project built this way; deploy triggered via the GitHub
+  API directly from a chat session (POST to the workflow's dispatch
+  endpoint), no phone tap even required for that one. Live at
+  `creel-worker.benaneely.workers.dev`. Built August 2026.
+
+**Constraints (beyond global)**
+- Cloudflare API tokens are account/zone-scoped, not per-Worker-script —
+  there's no way to scope a token to "only this one Worker." A token with
+  `Workers Scripts: Edit` can edit every Worker on the account. Factor this
+  into which account a CI token gets created against, not into which repo
+  it's added as a secret to.
+- Unlike the fine-grained GitHub PATs used elsewhere in this workflow
+  (session-scoped, pasted per-chat, never stored), this token has to
+  persist as a GitHub secret for CI to keep working across sessions —
+  "short-lived" isn't the right mitigation here. Narrow permissions +
+  being able to revoke/rotate easily is the actual safeguard.
+
+**Limitations**
+- `workflow_dispatch` means a deploy doesn't happen automatically on
+  commit — it's a separate, explicit step every time. Fine for a solo
+  low-traffic project; would be a real friction point at higher deploy
+  frequency.
+- No staging/preview environment in this setup — every dispatch deploys
+  straight to the one live Worker. Cloudflare's `versions upload` +
+  gradual deploy exists as an escape hatch (see wrangler-action docs) but
+  isn't wired up here.
+- GitHub Actions' raw job logs redirect off `api.github.com` to Azure blob
+  storage — outside typical sandboxed-agent network allowlists, so an
+  agent helping with this pattern may not be able to fetch deploy output
+  directly and will need the human to paste the expanded log section.
+
+**How it could be upgraded**
+- Switch to `push`-triggered deploys once a project's been stable a while
+  and the "every commit ships" tradeoff feels acceptable.
+- Add a lightweight pre-deploy check (even just `node --check` on the
+  entry file) as a job step before the `wrangler-action` step, so a syntax
+  error fails loud in CI instead of shipping.
+- Promote the Cloudflare API token to an org-level secret once more than
+  one project uses this pattern, instead of re-adding it per repo.
+
 ---
 
 ## Development Workflow
