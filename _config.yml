@@ -12,7 +12,7 @@ author: Ben Neely
 description: A compendium with digressions of topics started elsewhere on the interwebs (or things on my mind).
 
 # URL of your avatar or profile pic (you could use your GitHub profile pic)
-avatar: /images/circle-cropped.jpg
+avatar: /images/logo-avatar.jpg
 
 # Default share-preview image (og:image/twitter:image) for posts that don't
 # set their own `image:` in front matter. Deliberately left unset — falling
